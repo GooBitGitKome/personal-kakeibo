@@ -60,6 +60,9 @@ struct MonthControl: View {
 struct EntryView: View {
     @Bindable var model: KakeiboViewModel
     @FocusState private var memoFocused: Bool
+    private var saveDisabled: Bool {
+        model.isSaving || model.amount.isEmpty || model.categoryId == nil
+    }
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -78,7 +81,10 @@ struct EntryView: View {
                                 model.message = nil
                                 if digit == "⌫" { if !model.amount.isEmpty { model.amount.removeLast() } }
                                 else { model.appendAmount(digit) }
-                            } label: { Text(digit).font(.title2).frame(maxWidth: .infinity, minHeight: 52) }.buttonStyle(.bordered)
+                            } label: { Text(digit).font(.title2).frame(maxWidth: .infinity, minHeight: 52)
+                                .background(Color(uiColor: .tertiarySystemFill), in: RoundedRectangle(cornerRadius: 10))
+                                .contentShape(RoundedRectangle(cornerRadius: 10))
+                            }.buttonStyle(.plain)
                                 .accessibilityLabel(digit == "⌫" ? "1桁削除" : digit == "00" ? "ゼロを2桁入力" : digit)
                         }
                     }
@@ -92,14 +98,53 @@ struct EntryView: View {
                         Text("長押しで起動時の初期ジャンルに設定").font(.caption).foregroundStyle(.secondary)
                     }
                 }
-                RecordedDatePicker(date: $model.date, transactions: model.transactions)
-                TextField("メモ（任意・1,000文字まで）", text: $model.memo, axis: .vertical).textFieldStyle(.roundedBorder).focused($memoFocused)
-                Button(model.isSaving ? "保存中…" : "保存") { memoFocused = false; model.save() }.buttonStyle(.borderedProminent).frame(minHeight: 44)
-                    .disabled(model.isSaving || model.amount.isEmpty || model.categoryId == nil)
-                if let message = model.message { Text(message).foregroundStyle(.secondary) }
+                VStack(spacing: 0) {
+                    RecordedDatePicker(date: $model.date, transactions: model.transactions)
+                    Divider()
+                    TextField("メモ（任意・1,000文字まで）", text: $model.memo, axis: .vertical)
+                        .focused($memoFocused)
+                        .padding(.vertical, 12)
+
+                }
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
             }.padding().frame(maxWidth: 600)
                 .frame(maxWidth: .infinity)
-        }.dismissKeyboardOnSwipe().navigationTitle("収支を入力")
+        }
+        .background(Color(uiColor: .systemGroupedBackground))
+        .dismissKeyboardOnSwipe()
+        .navigationTitle("収支を入力")
+        .navigationBarTitleDisplayMode(.inline)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack(spacing: 8) {
+                if let message = model.message {
+                    Text(message)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityAddTraits(.updatesFrequently)
+                }
+                Button {
+                    memoFocused = false
+                    model.save()
+                } label: {
+                    Text(model.isSaving ? "保存中…" : "保存")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .foregroundStyle(saveDisabled ? Color.secondary : Color.white)
+                        .background(saveDisabled ? Color(uiColor: .tertiarySystemFill) : Color.accentColor,
+                                    in: RoundedRectangle(cornerRadius: 12))
+                        .contentShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+                .disabled(saveDisabled)
+            }
+            .frame(maxWidth: 568)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+        }
     }
 }
 struct HistoryView: View {

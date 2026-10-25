@@ -53,3 +53,7 @@ DomainとApplicationをSwift Packageとして分離し、保存・復元・ViewM
 - [採用した設計](docs/decisions/0002-first-implementation.md)
 - [検証記録](docs/validation.md)
 - [実機確認手順](docs/device-validation.md)
+
+## 入力画面のデザイン
+
+入力画面のタイトルはコンパクトに表示します。保存ボタンはタブバー上に固定し、左右16ptの余白、高さ48pt以上、角丸12ptで表示します。テンキーは控えめなグレーで統一し、日付・メモなどの補助項目をまとめています。
