@@ -1,13 +1,16 @@
 # 検証記録
 
-## v0.1.0 基準点の検証（2026-11-27、再検証待ち）
+## v0.1.0 基準点の検証（2026-11-27）
+
+検証したコミット: `4ef04f3`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。
 
 - 環境: macOS 27.2.1 (26B131)、Xcode 27.2 (27B52)、Apple Swift 6.4.2、arm64。README が想定する Xcode 26.3 / Swift 6.2.4 とは異なる。
-- 注意: 実行場所は、Git 管理外の `build/` を含む既存の作業ツリー（HEAD `24c237c`、`fa6d94e` からの差分は資料と CI のみ）で、新規クローンではない。クリーンチェックアウトでの検証は未完了。
-- `swift test`（作業ツリー、HEAD `24c237c`）: **失敗**。`error: 'kakeibo': multiple resources named 'PrivacyInfo.xcprivacy' in target 'PersistenceTests'`。`PersistenceTests` は `path: "."` のため、SwiftPM は Git の無視設定に関係なくリポジトリ全体を走査する。この作業ツリーでは `PrivacyInfo.xcprivacy` が 6 件見つかった（アプリ、Widget、Git 管理外の `.rollback/` 内のコピー 4 件）。
-- 対応: `Package.swift` の `PersistenceTests` に、追跡対象のアプリと Widget の manifest の `exclude` を追加（`4ef04f3`）。**Git 管理外の `.rollback/` を持つ作業ツリーでは、この修正後も同じエラーが出ることを確認済み**（HEAD `0c7a4f9`）。新規クローンでの結果は未確認で、クローンでの原因がアプリと Widget の 2 件の重複であることも未確認。
-- `xcodegen generate` + `xcodebuild build -scheme PersonalKakeibo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`（HEAD `24c237c`）: **BUILD SUCCEEDED**。生成後の `git status` に `project.pbxproj` の差分はなく、追跡済みの Xcode プロジェクトは `project.yml` と一致する。
-- 未検証: 修正後のテスト、クリーンクローンでの再実行、UI テスト、実機・iCloud・VoiceOver。
+- `swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox`: **成功。63 件、失敗 0**（PersonalKakeiboDomainTests 15 件、PersistenceTests 48 件、10,000 件のバックアップ試験を含む）。Swift Testing は 0 件。クローン内の `PrivacyInfo.xcprivacy` は 2 件（アプリ、Widget）。
+- `xcodegen generate`: 実行後の `git status --short` は空で、追跡済みの `project.pbxproj` は `project.yml` から再生成した内容と一致する。
+- `xcodebuild build -project PersonalKakeibo.xcodeproj -scheme PersonalKakeibo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`: **BUILD SUCCEEDED**（新しい DerivedData）。
+- 経緯: 先に Git 管理外の `.rollback/` を持つ作業ツリー（HEAD `24c237c`）で `swift test` を実行すると、`multiple resources named 'PrivacyInfo.xcprivacy' in target 'PersistenceTests'` で失敗した。`PersistenceTests` は `path: "."` で、SwiftPM は Git の無視設定に関係なくリポジトリ全体を走査するため、`.rollback/` 内のコピー 4 件も検出された。`Package.swift` にアプリと Widget の manifest の `exclude` を加えた（`4ef04f3`）。**`.rollback/` を持つ作業ツリーでは、この修正後も同じエラーで失敗する**（HEAD `0c7a4f9` で確認）。クローンで、この `exclude` なしでも失敗したかは未確認。
+- 未検証: UI テスト、Widget を含む実機動作、iCloud・CloudKit、VoiceOver、署名付きビルド。Xcode 26.3 での実行。
+- 注意: ローカルに `.rollback/` がある作業ツリーでは `swift test` が失敗する。新規クローンで実行するか、`.rollback/` を一時的にリポジトリ外へ移す。
 
 ## テンキーWidgetのグレー表示ボタンでアプリを開かない（2026-10-27）
 
