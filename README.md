@@ -69,6 +69,8 @@ Xcode 26.3 / Swift 6.2.4で次を実行します。
 CLANG_MODULE_CACHE_PATH=/tmp/kakeibo-clang-cache SWIFTPM_MODULECACHE_OVERRIDE=/tmp/kakeibo-swift-cache swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox
 ```
 
+Git管理外のローカルフォルダー `.rollback/` がある作業ツリーでは、`swift test` が `multiple resources named 'PrivacyInfo.xcprivacy'` で失敗します。SwiftPMが `.gitignore` に関係なくリポジトリ全体を走査するためです。新規クローンで実行するか、`.rollback/` を一時的にリポジトリの外へ移してください。
+
 アプリと Widget の署名なし iOS Simulator ビルドは次で確認します。GitHub Actions も同じ手順を実行します。この結果は署名・実機・CloudKit・UI テストの合格を意味しません。
 
 ```sh
