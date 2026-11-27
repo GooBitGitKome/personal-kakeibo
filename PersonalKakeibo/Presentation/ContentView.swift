@@ -497,9 +497,10 @@ struct AnalyticsView: View {
             Section("これからの支払い") {
                 if upcoming.isEmpty { Text("予定はありません。") }
                 ForEach(upcoming.prefix(12)) { payment in
-                    Text((model.contract(for: payment)?.name ?? "支払予定") + "・"
-                         + payment.dueDate.formatted(date: .abbreviated, time: .omitted)
-                         + "・" + yen(payment.expectedAmount))
+                    let contractName = model.contract(for: payment)?.name ?? "支払予定"
+                    let dueText = payment.dueDate.formatted(date: .abbreviated, time: .omitted)
+                    let amountText = yen(payment.expectedAmount)
+                    Text(contractName + "・" + dueText + "・" + amountText)
                 }
             }
     }
