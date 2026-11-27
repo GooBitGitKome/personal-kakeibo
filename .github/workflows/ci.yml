@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Package tests and Simulator build
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest installed Xcode 26
+        run: |
+          xcode_app=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -z "$xcode_app" ]; then
+            echo "::error::No Xcode 26 is installed on this runner"
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode_app/Contents/Developer"
+          xcodebuild -version
+          swift --version
+
+      - name: Run package tests
+        run: |
+          CLANG_MODULE_CACHE_PATH=/tmp/kakeibo-clang-cache \
+          SWIFTPM_MODULECACHE_OVERRIDE=/tmp/kakeibo-swift-cache \
+          swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox
+
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build the app and widget for iOS Simulator without signing
+        run: |
+          xcodebuild build \
+            -project PersonalKakeibo.xcodeproj \
+            -scheme PersonalKakeibo \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO

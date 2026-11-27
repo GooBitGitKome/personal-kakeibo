@@ -1,0 +1,43 @@
+name: 機能・改善
+description: 新しい機能や改善の課題を、要件と受け入れ条件つきで起票する
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 今どのように困っているか。
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 目的・解決すべき問題
+    validations:
+      required: true
+  - type: textarea
+    id: functional
+    attributes:
+      label: 機能要件
+    validations:
+      required: true
+  - type: textarea
+    id: non-functional
+    attributes:
+      label: 非機能要件
+      description: 性能、アクセシビリティ、データ保全、プライバシーなど。なければ「なし」。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: リリース後に満たしたことを確認できる形で書く。
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: input
+    id: target-version
+    attributes:
+      label: 対象バージョン
+      placeholder: v0.2.0

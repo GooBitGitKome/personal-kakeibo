@@ -4,6 +4,32 @@ iOS・iPadOS 17以上の個人用家計簿。SwiftUI、SwiftData、Swift Charts�
 
 入力、履歴の編集・確認付き削除、ジャンル管理、月別集計、12か月の推移、月間予算、CSV出力、JSONバックアップ・復元プレビューを実装しています。初期ジャンルは自動作成されます。日付・集計は日本時間・グレゴリオ暦です。
 
+## 開発方針とロードマップ
+
+Issue から始め、要件・設計・テスト・レビュー・リリースの記録を残す開発の流れで進めます。要件・設計・テスト方針の決定とリリースの判断は人が行い、AI の利用と人による評価・修正・検証は PR に記録します。詳細は [開発ガイド](CONTRIBUTING.md) と [ADR 0003](docs/decisions/0003-release-and-development-workflow.md) にあります。
+
+| バージョン | 内容 |
+|---|---|
+| v0.1.0 | 現在のプロトタイプ最終版（基準点。状態は [CHANGELOG](CHANGELOG.md)） |
+| v0.2.0 | 分割払い機能 |
+| v0.3.0 | ボーナス払い機能 |
+| v0.4.0 | 簡易登録の高速化 |
+| v1.0.0 | 品質検証・正式リリース |
+
+v0.2.0 以降は計画で、リリース済みではありません。リリースした内容は [CHANGELOG](CHANGELOG.md) だけに記載します。
+
+## リポジトリの構成
+
+| 場所 | 内容 |
+|---|---|
+| `PersonalKakeibo/` | アプリ本体（Domain、Application、Infrastructure、Presentation、WidgetSupport） |
+| `PersonalKakeiboWidget/` | Widget 拡張 |
+| `LocalPackages/` | ローカルの Swift Package |
+| `Tests/` | 自動テスト（Domain、永続化、UI） |
+| `docs/` | 開発仕様、[決定記録（ADR）](docs/decisions/)、検証記録、実機確認手順 |
+| `openspec/` | 機能ごとの要件・設計・タスクの記録 |
+| `.github/` | Issue・PR テンプレートと CI |
+
 ## 入力・予算・リマインダー
 
 - ジャンルは3列のボタンで選択します。入力画面で長押しすると収入・支出それぞれの起動時の初期ジャンルになり、星で表示されます。
@@ -43,14 +69,23 @@ Xcode 26.3 / Swift 6.2.4で次を実行します。
 CLANG_MODULE_CACHE_PATH=/tmp/kakeibo-clang-cache SWIFTPM_MODULECACHE_OVERRIDE=/tmp/kakeibo-swift-cache swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox
 ```
 
+アプリと Widget の署名なし iOS Simulator ビルドは次で確認します。GitHub Actions も同じ手順を実行します。この結果は署名・実機・CloudKit・UI テストの合格を意味しません。
+
+```sh
+xcodegen generate
+xcodebuild build -project PersonalKakeibo.xcodeproj -scheme PersonalKakeibo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO
+```
+
 DomainとApplicationをSwift Packageとして分離し、保存・復元・ViewModelのテストではSwiftDataのテスト用ストアと通知サービスの代替を使用します。入力、予算、繰り返し予定、口座・カード、契約の支払確認、返金、実質コスト、旧取込履歴付きデータの保持、旧スキーマ・旧JSONからの移行、保存失敗時のrollbackを確認しています。
 
 ## 状態と資料
 
 入力改善・予算・繰り返し収支の追加を実装した段階です。保存経路のモデル初期化と変更通知を修正し、診断ログを追加しています。Swift 6のCombineコールバックのスレッド検査による停止を最小コードで再現し、修正後の正常終了を確認しました。実機で報告された終了の原因特定・解消確認は未完了です。実機UI、VoiceOver、iPad分割表示、2台のiCloud同期、本番スキーマは未検証です。MVPの受け入れ完了や配布可能な状態を意味しません。
 
+- [開発ガイド](CONTRIBUTING.md)
+- [変更履歴](CHANGELOG.md)
 - [開発仕様](docs/development-specification.md)
-- [採用した設計](docs/decisions/0002-first-implementation.md)
+- [設計決定（ADR）](docs/decisions/): [0002 初回版](docs/decisions/0002-first-implementation.md)、[0003 リリースと開発プロセス](docs/decisions/0003-release-and-development-workflow.md)
 - [検証記録](docs/validation.md)
 - [実機確認手順](docs/device-validation.md)
 

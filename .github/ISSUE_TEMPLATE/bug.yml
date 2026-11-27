@@ -1,0 +1,36 @@
+name: 不具合
+description: 期待と異なる動作を、再現手順と受け入れ条件つきで起票する
+labels: ["bug"]
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・影響
+      description: 何が起きたか、データへの影響はあるか。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作と実際の動作
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 環境
+      description: アプリのバージョンまたはコミット、OS、端末。
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: 直ったと判断できる条件。
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
