@@ -2,7 +2,7 @@
 
 ## v0.1.0 基準点の検証（2026-11-27）
 
-検証したコミット: `4ef04f3`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。
+検証したコミット: 書き換え前の `f156ba0`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。未 push の履歴から端末名を除くため、履歴を書き換えて同じ内容を `4ef04f3` として作り直した。`f156ba0` と `4ef04f3` のソース・設定は同一で、差分は `docs/validation.md` と `CHANGELOG.md` の文面だけ。以下の SHA は書き換え後のもの。
 
 - 環境: macOS 27.2.1 (26B131)、Xcode 27.2 (27B52)、Apple Swift 6.4.2、arm64。README が想定する Xcode 26.3 / Swift 6.2.4 とは異なる。
 - `swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox`: **成功。63 件、失敗 0**（PersonalKakeiboDomainTests 15 件、PersistenceTests 48 件、10,000 件のバックアップ試験を含む）。Swift Testing は 0 件。クローン内の `PrivacyInfo.xcprivacy` は 2 件（アプリ、Widget）。
