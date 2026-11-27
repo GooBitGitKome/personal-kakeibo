@@ -22,7 +22,10 @@ let package = Package(
             "PersonalKakeiboDomain",
             "PersonalKakeiboApplication",
             .product(name: "LifeCostIntegration", package: "LifeCostIntegration")
-        ], path: ".", sources: [
+        ], path: ".", exclude: [
+            "PersonalKakeibo/App/PrivacyInfo.xcprivacy",
+            "PersonalKakeiboWidget/PrivacyInfo.xcprivacy"
+        ], sources: [
             "PersonalKakeibo/Infrastructure",
             "PersonalKakeibo/Presentation/KakeiboViewModel.swift",
             "PersonalKakeibo/Presentation/FinanceViewModel.swift",
