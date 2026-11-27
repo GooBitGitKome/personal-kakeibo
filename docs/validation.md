@@ -1,5 +1,14 @@
 # 検証記録
 
+## v0.1.0 基準点の検証（2026-11-27、再検証待ち）
+
+- 環境: macOS 27.2.1 (26B131)、Xcode 27.2 (27B52)、Apple Swift 6.4.2、arm64。README が想定する Xcode 26.3 / Swift 6.2.4 とは異なる。
+- 注意: 実行場所は、Git 管理外の `build/` を含む既存の作業ツリー（HEAD `24c237c`、`fa6d94e` からの差分は資料と CI のみ）で、新規クローンではない。クリーンチェックアウトでの検証は未完了。
+- `swift test`（HEAD `24c237c`）: **失敗**。`error: 'kakeibo': multiple resources named 'PrivacyInfo.xcprivacy' in target 'PersistenceTests'`。`PersistenceTests` は `path: "."` のため、アプリと Widget の 2 つの Privacy Manifest を同名のリソースとして検出する。Widget の manifest は基準コミットで初めて追跡対象に入った。
+- 対応: `Package.swift` の `PersistenceTests` に両 manifest の `exclude` を追加（`4ef04f3`）。**この修正後の `swift test` は未実行**。
+- `xcodegen generate` + `xcodebuild build -scheme PersonalKakeibo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`（HEAD `24c237c`）: **BUILD SUCCEEDED**。生成後の `git status` に `project.pbxproj` の差分はなく、追跡済みの Xcode プロジェクトは `project.yml` と一致する。
+- 未検証: 修正後のテスト、クリーンクローンでの再実行、UI テスト、実機・iCloud・VoiceOver。
+
 ## テンキーWidgetのグレー表示ボタンでアプリを開かない（2026-10-27）
 
 - 無効な登録・ページ送りボタンに `.disabled` を適用すると、タップがWidgetのアプリ起動へ渡る問題に対応。表示はグレーのまま、データを参照・変更せずアプリも起動しない `IgnoreWidgetTapIntent` でタップを受け止める。読み上げでは利用できない状態を伝える。有効な操作は既存のIntentを使用する。
