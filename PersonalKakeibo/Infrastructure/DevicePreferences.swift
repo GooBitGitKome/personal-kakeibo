@@ -7,10 +7,12 @@ import PersonalKakeiboDomain
     private(set) var slots: [ReminderSlot]
     private(set) var defaultExpense: UUID?
     private(set) var defaultIncome: UUID?
+    private(set) var hasCompletedWelcome: Bool
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         defaultExpense = defaults.string(forKey: "defaultExpense").flatMap(UUID.init(uuidString:))
         defaultIncome = defaults.string(forKey: "defaultIncome").flatMap(UUID.init(uuidString:))
+        hasCompletedWelcome = defaults.bool(forKey: "hasCompletedWelcome")
         if let data = defaults.data(forKey: "reminderSlots"),
            let saved = try? JSONDecoder().decode([ReminderSlot].self, from: data), ReminderSlot.validate(saved), saved.count == 3 {
             slots = saved
@@ -20,10 +22,15 @@ import PersonalKakeiboDomain
     func setDefault(_ id: UUID?, for type: TransactionType) {
         if type == .expense { defaultExpense = id } else { defaultIncome = id }
         defaults.set(id?.uuidString, forKey: type == .expense ? "defaultExpense" : "defaultIncome")
+        SharedStore.reloadWidgets()
     }
     func setSlots(_ slots: [ReminderSlot]) throws {
         guard slots.count == 3, ReminderSlot.validate(slots) else { throw StoreError.conflict }
         let data = try JSONEncoder().encode(slots)
         defaults.set(data, forKey: "reminderSlots"); self.slots = slots
+    }
+    func completeWelcome() {
+        defaults.set(true, forKey: "hasCompletedWelcome")
+        hasCompletedWelcome = true
     }
 }

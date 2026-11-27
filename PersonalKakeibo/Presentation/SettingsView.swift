@@ -23,9 +23,8 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section("ジャンル") { NavigationLink("ジャンル管理") { CategoryView(model: model) } }
-            Section("予算・リマインダー") {
+            Section("予算・通知") {
                 NavigationLink("ジャンル別の日額・月額予算") { BudgetSettingsView(model: model) }
-                NavigationLink("繰り返し収支") { RemindersView(model: model) }
                 NavigationLink("通知設定") { NotificationSettingsView(model: model) }
             }
             Section("月間予算") {

@@ -13,11 +13,11 @@ import PersonalKakeiboDomain
 
     @discardableResult
     public func create(type: TransactionType, amountText: String, categoryId: UUID,
-                       occurredAt: Date, memo: String = "", now: Date = Date()) throws -> Transaction {
+                       occurredAt: Date, memo: String = "", isSavingsEligible: Bool = false, now: Date = Date()) throws -> Transaction {
         let amount = try AmountValidator.parse(amountText)
         guard memo.count <= 1000 else { throw KakeiboError.invalidMemo }
         let value = Transaction(type: type, amount: amount, categoryId: categoryId,
-                                occurredAt: occurredAt, memo: memo, createdAt: now, updatedAt: now)
+                                occurredAt: occurredAt, memo: memo, createdAt: now, updatedAt: now, isSavingsEligible: isSavingsEligible)
         try AmountValidator.validate(value, category: try category(id: categoryId))
         try transactions.save(value)
         return value
@@ -25,7 +25,7 @@ import PersonalKakeiboDomain
 
     @discardableResult
     public func update(id: UUID, type: TransactionType, amountText: String, categoryId: UUID,
-                       occurredAt: Date, memo: String, now: Date = Date()) throws -> Transaction {
+                       occurredAt: Date, memo: String, isSavingsEligible: Bool? = nil, now: Date = Date()) throws -> Transaction {
         guard let previous = try transactions.find(id: id) else { throw KakeiboError.notFound }
         guard memo.count <= 1000 else { throw KakeiboError.invalidMemo }
         var value = previous
@@ -34,6 +34,7 @@ import PersonalKakeiboDomain
         value.categoryId = categoryId
         value.occurredAt = occurredAt
         value.memo = memo
+        if let isSavingsEligible { value.isSavingsEligible = isSavingsEligible }
         value.updatedAt = now
         try AmountValidator.validate(value, category: try category(id: categoryId), previous: previous)
         try transactions.save(value)

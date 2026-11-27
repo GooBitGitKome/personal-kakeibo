@@ -30,9 +30,14 @@ public struct BackupSnapshot: Equatable, Sendable {
     public var categoryBudgets: [CategoryBudget]
     public var recurringPlans: [RecurringPlan]
     public var occurrences: [PlanOccurrence]
-    public init(transactions: [Transaction], categories: [Category], budgets: [Budget], categoryBudgets: [CategoryBudget] = [], recurringPlans: [RecurringPlan] = [], occurrences: [PlanOccurrence] = []) {
+    public var importedPayments: [ImportedPayment]
+    public var lifeCostSettings: [LifeCostSetting]
+    public var finance: FinanceState
+    public init(transactions: [Transaction], categories: [Category], budgets: [Budget], categoryBudgets: [CategoryBudget] = [], recurringPlans: [RecurringPlan] = [], occurrences: [PlanOccurrence] = [], importedPayments: [ImportedPayment] = [], lifeCostSettings: [LifeCostSetting] = [], finance: FinanceState = FinanceState()) {
         self.transactions = transactions; self.categories = categories; self.budgets = budgets
         self.categoryBudgets = categoryBudgets; self.recurringPlans = recurringPlans; self.occurrences = occurrences
+        self.importedPayments = importedPayments; self.lifeCostSettings = lifeCostSettings
+        self.finance = finance
     }
 }
 

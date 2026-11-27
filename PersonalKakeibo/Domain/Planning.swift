@@ -109,13 +109,16 @@ public enum Planning {
         return monthly / Int64(days.count)
     }
 
-    public static func remaining(budget: CategoryBudget, transactions: [Transaction], date: Date) throws -> (daily: Int64?, monthly: Int64?) {
+    public static func remaining(budget: CategoryBudget, transactions: [Transaction], date: Date,
+                                 refunds: [FinanceRefund] = []) throws -> (daily: Int64?, monthly: Int64?) {
         let calendar = Month.calendar
         let start = calendar.startOfDay(for: date)
         guard let end = calendar.date(byAdding: .day, value: 1, to: start) else { throw KakeiboError.invalidMonth }
         let relevant = transactions.filter { $0.type == .expense && $0.categoryId == budget.categoryId }
-        let daily = try MonthlySummary.calculate(relevant, in: start..<end).expense
-        let monthly = try MonthlySummary.calculate(relevant, in: Month(date: date).range).expense
+        let relevantIds = Set(relevant.map(\.id))
+        let relevantRefunds = refunds.filter { relevantIds.contains($0.originalTransactionId) }
+        let daily = try MonthlySummary.calculate(relevant, in: start..<end, refunds: relevantRefunds).expense
+        let monthly = try MonthlySummary.calculate(relevant, in: Month(date: date).range, refunds: relevantRefunds).expense
         return (budget.dailyAmount.map { $0 - daily }, budget.monthlyAmount.map { $0 - monthly })
     }
 }

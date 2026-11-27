@@ -21,17 +21,23 @@ entitlements = {
     'com.apple.developer.icloud-container-identifiers': [args.container],
     'com.apple.developer.icloud-services': ['CloudKit'],
     'aps-environment': 'development',
+    'com.apple.security.application-groups': [f'group.{args.bundle}.shared'],
 }
 (root / 'PersonalKakeibo/App/Cloud.entitlements').write_bytes(plistlib.dumps(entitlements))
 text = (root / 'project.yml').read_text()
-# The local project may already preserve its signing team. Replace it for the requested cloud configuration.
-text = re.sub(r'^        DEVELOPMENT_TEAM:.*\n', '', text, flags=re.MULTILINE)
-text = text.replace('PRODUCT_BUNDLE_IDENTIFIER: com.example.PersonalKakeibo\n', 'PRODUCT_BUNDLE_IDENTIFIER: ' + args.bundle + '\n')
-text = text.replace('        TARGETED_DEVICE_FAMILY:',
-    f'        DEVELOPMENT_TEAM: {args.team}\n'
-    '        CODE_SIGN_ENTITLEMENTS: PersonalKakeibo/App/Cloud.entitlements\n'
-    f'        INFOPLIST_KEY_KakeiboCloudContainer: {args.container}\n'
+# Keep app and widget on the same signing team, App Group, and CloudKit container.
+text = re.sub(r'^    DEVELOPMENT_TEAM:.*$', f'    DEVELOPMENT_TEAM: {args.team}', text, flags=re.MULTILINE)
+text = re.sub(r'^    KAKEIBO_BUNDLE_ID:.*$', f'    KAKEIBO_BUNDLE_ID: {args.bundle}', text, flags=re.MULTILINE)
+text = re.sub(r'^    KAKEIBO_APP_GROUP:.*$', f'    KAKEIBO_APP_GROUP: group.{args.bundle}.shared', text, flags=re.MULTILINE)
+text = text.replace('PersonalKakeibo/App/App.entitlements', 'PersonalKakeibo/App/Cloud.entitlements')
+text = text.replace('PersonalKakeiboWidget/Widget.entitlements', 'PersonalKakeiboWidget/Cloud.entitlements')
+text = re.sub(r'^(\s*)KakeiboAppGroup:.*$',
+    lambda match: match.group(0) + '\n' + match.group(1) + f'KakeiboCloudContainer: {args.container}',
+    text, flags=re.MULTILINE)
+text = text.replace('        INFOPLIST_KEY_UILaunchScreen_Generation: YES',
     '        INFOPLIST_KEY_UIBackgroundModes: [remote-notification]\n'
-    '        TARGETED_DEVICE_FAMILY:')
+    '        INFOPLIST_KEY_UILaunchScreen_Generation: YES')
+widget_entitlements = {key: value for key, value in entitlements.items() if key != 'aps-environment'}
+(root / 'PersonalKakeiboWidget/Cloud.entitlements').write_bytes(plistlib.dumps(widget_entitlements))
 (root / 'project-cloud.yml').write_text(text)
 print('Generated project-cloud.yml. Run: xcodegen generate --spec project-cloud.yml')

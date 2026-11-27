@@ -1,0 +1,109 @@
+name: PersonalKakeibo
+options:
+  deploymentTarget:
+    iOS: '17.0'
+settings:
+  base:
+    SWIFT_VERSION: '6.0'
+    KAKEIBO_BUNDLE_ID: com.example.PersonalKakeibo
+    KAKEIBO_APP_GROUP: group.com.example.PersonalKakeibo.shared
+targets:
+  LifeCostIntegration:
+    type: framework
+    platform: iOS
+    sources: [LocalPackages/LifeCostIntegration/Sources/LifeCostIntegration]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.LifeCostIntegration
+        GENERATE_INFOPLIST_FILE: YES
+  PersonalKakeiboDomain:
+    type: framework
+    platform: iOS
+    sources: [PersonalKakeibo/Domain]
+    dependencies:
+      - target: LifeCostIntegration
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.PersonalKakeibo.Domain
+        GENERATE_INFOPLIST_FILE: YES
+  PersonalKakeiboApplication:
+    type: framework
+    platform: iOS
+    sources: [PersonalKakeibo/Application]
+    dependencies:
+      - target: PersonalKakeiboDomain
+      - target: LifeCostIntegration
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.PersonalKakeibo.Application
+        GENERATE_INFOPLIST_FILE: YES
+  PersonalKakeibo:
+    type: application
+    platform: iOS
+    sources:
+      - path: PersonalKakeibo/App
+        excludes: [Assets.xcassets]
+      - PersonalKakeibo/Infrastructure
+      - PersonalKakeibo/Presentation
+      - PersonalKakeibo/WidgetSupport
+    dependencies:
+      - target: KakeiboEntryWidget
+        embed: true
+      - target: LifeCostIntegration
+      - target: PersonalKakeiboDomain
+      - target: PersonalKakeiboApplication
+    info:
+      path: PersonalKakeibo/App/Info.plist
+      properties:
+        KakeiboAppGroup: $(KAKEIBO_APP_GROUP)
+        CFBundleURLTypes:
+          - CFBundleURLName: quick-entry
+            CFBundleURLSchemes: [personalkakeibo]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(KAKEIBO_BUNDLE_ID)
+        CODE_SIGN_ENTITLEMENTS: PersonalKakeibo/App/App.entitlements
+        INFOPLIST_KEY_KakeiboAppGroup: $(KAKEIBO_APP_GROUP)
+        TARGETED_DEVICE_FAMILY: '1,2'
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: 家計簿
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+  KakeiboEntryWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - PersonalKakeiboWidget
+      - PersonalKakeibo/WidgetSupport
+      - PersonalKakeibo/Infrastructure
+    dependencies:
+      - target: PersonalKakeiboDomain
+      - target: PersonalKakeiboApplication
+      - target: LifeCostIntegration
+    info:
+      path: PersonalKakeiboWidget/Info.plist
+      properties:
+        KakeiboAppGroup: $(KAKEIBO_APP_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(KAKEIBO_BUNDLE_ID).Widget
+        CODE_SIGN_ENTITLEMENTS: PersonalKakeiboWidget/Widget.entitlements
+        INFOPLIST_KEY_KakeiboAppGroup: $(KAKEIBO_APP_GROUP)
+        INFOPLIST_KEY_CFBundleDisplayName: 支出を登録
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        TARGETED_DEVICE_FAMILY: '1,2'
+  PersonalKakeiboUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [Tests/UITests]
+    dependencies:
+      - target: PersonalKakeibo
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.PersonalKakeiboUITests
+        GENERATE_INFOPLIST_FILE: YES

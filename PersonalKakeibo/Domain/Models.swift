@@ -1,7 +1,7 @@
 import Foundation
 
 public enum TransactionType: String, Codable, Sendable { case income, expense }
-public enum TransactionSource: String, Codable, Sendable { case manual, receipt, recurring }
+public enum TransactionSource: String, Codable, Sendable { case manual, receipt, recurring, lifecost }
 
 public struct Transaction: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
@@ -11,16 +11,28 @@ public struct Transaction: Identifiable, Codable, Equatable, Sendable {
     public var occurredAt: Date
     public var memo: String
     public var source: TransactionSource
+    public var isSavingsEligible: Bool
     public let createdAt: Date
     public var updatedAt: Date
 
     public init(id: UUID = UUID(), type: TransactionType, amount: Int64, categoryId: UUID,
                 occurredAt: Date, memo: String = "", source: TransactionSource = .manual,
-                createdAt: Date = Date(), updatedAt: Date = Date()) {
+                createdAt: Date = Date(), updatedAt: Date = Date(), isSavingsEligible: Bool = false) {
         self.id = id; self.type = type; self.amount = amount; self.categoryId = categoryId
         self.occurredAt = occurredAt; self.memo = memo; self.source = source
-        self.createdAt = createdAt; self.updatedAt = updatedAt
+        self.createdAt = createdAt; self.updatedAt = updatedAt; self.isSavingsEligible = isSavingsEligible
     }
+    private enum CodingKeys: String, CodingKey { case id, type, amount, categoryId, occurredAt, memo, source, createdAt, updatedAt, isSavingsEligible }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id); type = try c.decode(TransactionType.self, forKey: .type)
+        amount = try c.decode(Int64.self, forKey: .amount); categoryId = try c.decode(UUID.self, forKey: .categoryId)
+        occurredAt = try c.decode(Date.self, forKey: .occurredAt); memo = try c.decode(String.self, forKey: .memo)
+        source = try c.decode(TransactionSource.self, forKey: .source); createdAt = try c.decode(Date.self, forKey: .createdAt)
+        updatedAt = try c.decode(Date.self, forKey: .updatedAt)
+        isSavingsEligible = try c.decodeIfPresent(Bool.self, forKey: .isSavingsEligible) ?? false
+    }
+
 }
 
 public struct Category: Identifiable, Codable, Equatable, Sendable {

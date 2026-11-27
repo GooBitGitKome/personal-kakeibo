@@ -18,11 +18,14 @@ struct ReminderMessage: Equatable, Sendable {
 #if os(iOS)
 import UserNotifications
 
-@MainActor @Observable final class ReminderService: NSObject, UNUserNotificationCenterDelegate, ReminderScheduling {
+@MainActor @Observable final class ReminderService: NSObject, @preconcurrency UNUserNotificationCenterDelegate, ReminderScheduling {
     var status = "通知の状態を確認中…"
     var onOpen: (() -> Void)? {
         didSet {
-            if pendingOpen, let onOpen { pendingOpen = false; onOpen() }
+            if pendingOpen, let onOpen {
+                pendingOpen = false
+                Task { @MainActor in onOpen() }
+            }
         }
     }
     private var pendingOpen = false
@@ -80,13 +83,20 @@ import UserNotifications
             status = "通知の予約に失敗しました：" + error.localizedDescription
         }
     }
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        await MainActor.run {
-            if let onOpen { onOpen() } else { pendingOpen = true }
-        }
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        if let onOpen { onOpen() } else { pendingOpen = true }
+        completionHandler()
     }
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        [.banner, .sound]
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 }
 #endif

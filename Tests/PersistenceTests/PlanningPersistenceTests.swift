@@ -205,7 +205,7 @@ final class PlanningPersistenceTests: XCTestCase {
         let legacySnapshot = BackupSnapshot(transactions: [], categories: original.categories, budgets: original.budgets)
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: BackupFormat.encode(legacySnapshot)) as? [String: Any])
         object["schemaVersion"] = 1
-        for key in ["categoryBudgets", "recurringPlans", "occurrences"] { object.removeValue(forKey: key) }
+        for key in ["categoryBudgets", "recurringPlans", "occurrences", "finance"] { object.removeValue(forKey: key) }
         let legacy = try BackupFormat.decode(JSONSerialization.data(withJSONObject: object))
         XCTAssertTrue(BackupFormat.equivalent(legacy, legacySnapshot))
         let legacyPreview = try BackupFormat.preview(legacy, current: destination.snapshot(), overwrite: false)
@@ -266,7 +266,7 @@ final class PlanningPersistenceTests: XCTestCase {
         try store.setArchived(id: second.id, archived: true); model.refresh()
         XCTAssertTrue(try XCTUnwrap(fake.updates.last).2.isEmpty)
     }
-    @MainActor func testNotificationTargetsSlotsAndOpeningReminderTab() async throws {
+    @MainActor func testNotificationTargetsSlotsAndOpeningManagedReminders() async throws {
         let store = try store(); let fake = FakeReminders(); let prefs = preferences()
         let model = KakeiboViewModel(store: store, preferences: prefs, reminderService: fake)
         XCTAssertFalse(try XCTUnwrap(fake.updates.last).0)
@@ -276,7 +276,13 @@ final class PlanningPersistenceTests: XCTestCase {
         XCTAssertTrue(model.notificationTargetsExist)
         XCTAssertTrue(try XCTUnwrap(fake.updates.last).0)
         XCTAssertEqual(try XCTUnwrap(fake.updates.last).1, ReminderSlot.defaults)
-        fake.onOpen?(); XCTAssertEqual(model.selectedTab, 3)
+        model.selectedTab = 4
+        model.managementPath = [.contracts]
+        fake.onOpen?()
+        XCTAssertEqual(model.selectedTab, 3)
+        XCTAssertEqual(model.managementPath, [.reminders])
+        fake.onOpen?()
+        XCTAssertEqual(model.managementPath, [.reminders])
         var slots = prefs.slots; slots[1].hour = 7
         XCTAssertThrowsError(try model.setNotificationSlots(slots))
         XCTAssertEqual(prefs.slots, ReminderSlot.defaults)

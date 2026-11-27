@@ -27,7 +27,8 @@ public struct MonthlySummary: Equatable, Sendable {
     public let balance: Int64
     public let expensesByCategory: [UUID: Int64]
 
-    public static func calculate(_ transactions: [Transaction], in range: Range<Date>) throws -> Self {
+    public static func calculate(_ transactions: [Transaction], in range: Range<Date>,
+                                 refunds: [FinanceRefund] = []) throws -> Self {
         var income: Int64 = 0
         var expense: Int64 = 0
         var grouped: [UUID: Int64] = [:]
@@ -39,6 +40,13 @@ public struct MonthlySummary: Equatable, Sendable {
                 expense = try checkedAdd(expense, transaction.amount)
                 grouped[transaction.categoryId] = try checkedAdd(grouped[transaction.categoryId, default: 0], transaction.amount)
             }
+        }
+        let originals = Dictionary(uniqueKeysWithValues: transactions.map { ($0.id, $0) })
+        for refund in refunds where range.contains(refund.date) {
+            guard refund.amount > 0, let original = originals[refund.originalTransactionId],
+                  original.type == .expense else { throw FinanceError.invalid }
+            expense = try checkedAdd(expense, -refund.amount)
+            grouped[original.categoryId] = try checkedAdd(grouped[original.categoryId, default: 0], -refund.amount)
         }
         let (balance, overflow) = income.subtractingReportingOverflow(expense)
         guard !overflow else { throw KakeiboError.overflow }

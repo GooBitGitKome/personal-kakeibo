@@ -7,45 +7,108 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0364E797F320A92BFD81B07C /* FinanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D63F048F927C239E92CC9 /* FinanceViewModel.swift */; };
 		094A075198A70DAA275BF702 /* CloudAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D3E45094888AE1E8468662 /* CloudAccount.swift */; };
 		0C7A6BF5095B38851E1BD029 /* TransactionUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB8CF98A5DBD4E078F5D6AC /* TransactionUseCases.swift */; };
+		0E5050CC0F57392708F9AC3E /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E166B4D24E3DD414B77A081 /* ReminderService.swift */; };
+		0FD8C4393BCD291BFF58BE6F /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5530B9AD3B4122F5BCBECA9 /* SharedStore.swift */; };
 		159B43D3DE694246E7C25B95 /* StoredModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D5A55970E78B5F0CE5B9FC /* StoredModels.swift */; };
+		1888DF8A59A9E2CEC655B581 /* SharedStoreLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850F05BE7D0F473BC08F7331 /* SharedStoreLock.swift */; };
 		1AE7358BC7C0BF019B633D6B /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E166B4D24E3DD414B77A081 /* ReminderService.swift */; };
+		1FC0CBEE05C66572CD829E01 /* LifeCostIntegration in Frameworks */ = {isa = PBXBuildFile; productRef = 75E5C7E34DD667CDCBB617E2 /* LifeCostIntegration */; };
 		330457F7FEC84912ECD0EE7E /* DevicePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3834A3AD4A8248DBB1D4FA0 /* DevicePreferences.swift */; };
 		3BF481AA60CF10956ADC7B5B /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = B577D8F8BE2A950CA22ED63F /* Month.swift */; };
+		3EE1EEFDF6887787ABFF4A1B /* LifeCostIntegration in Frameworks */ = {isa = PBXBuildFile; productRef = B0024E2F9E125F71E1F9018E /* LifeCostIntegration */; };
 		41AC26C4302506165EEA5743 /* PersonalKakeiboApplication.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B6E23B7D28910E9DA52D4BF /* PersonalKakeiboApplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */; };
+		4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */; };
+		4DF1D2BCE1EB283D77E955F3 /* FinanceContractsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */; };
+		557EBC4321E358465D84260E /* BackupFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = C252A1471FA76A6CD242BD19 /* BackupFormat.swift */; };
+		59A60B2CD0F427868D4A32A2 /* SharedStoreLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850F05BE7D0F473BC08F7331 /* SharedStoreLock.swift */; };
 		5F43751B023210B1800EBB6B /* PersonalKakeiboDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */; };
+		6671F464E34583B3FD8D2AE2 /* FinanceHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F0082A51F1F35D0EDB4399 /* FinanceHubView.swift */; };
 		6712F2316D470930566F9347 /* BudgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283D180E8A0A3AA8F14276EC /* BudgetSettingsView.swift */; };
 		6B55886D0EAB98F314E9E022 /* EntryControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14413FD65E36001048677A1 /* EntryControls.swift */; };
 		6FFBA36763859921AA5BABC9 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA78B0E1400A946FD140EB /* Store.swift */; };
+		7B5807A6AB263898F9D63611 /* QuickExpenseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62D4B787FDA0A9BBA482EA1 /* QuickExpenseViewModel.swift */; };
 		831E4CD698E70246C4861B32 /* KakeiboViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59315194236ECC3A519DDEF /* KakeiboViewModel.swift */; };
+		86525183D5C03DBB269B965E /* LifeCostIntegration in Frameworks */ = {isa = PBXBuildFile; productRef = 0F2A9EDCD1F1B0D57749F4B9 /* LifeCostIntegration */; };
 		8DBF23D3132C347FB150A7B5 /* ReminderSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA60CB83B18B0B4B9909EDE7 /* ReminderSlot.swift */; };
+		8F0F99B651DB335D9D56BB39 /* CloudAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D3E45094888AE1E8468662 /* CloudAccount.swift */; };
 		90B58DDBD32797B926D06636 /* PersonalKakeiboApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1621A78BF1EF7762CF0E99AB /* PersonalKakeiboApp.swift */; };
+		93F1D6204FFB7ABB0A1A78BA /* SubscriptionServiceSelectionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFC39445DABF39B117DB029 /* SubscriptionServiceSelectionUITests.swift */; };
 		96FDF5A3E3504361586DE567 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4EFAFCA7FB4F4A1409AB7A3 /* Assets.xcassets */; };
 		98EEB365D1E4C68CF8DD49A0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF6988D671161D63626E4B3 /* ContentView.swift */; };
+		9A0576A0CDDB26B85E12F3AC /* FreshStartNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05D70619BD35CB58E5F9804 /* FreshStartNavigationUITests.swift */; };
+		9ADA906157DE0F0CE7EF4C34 /* KakeiboEntryWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5355B7697C345DD9FDA59A /* KakeiboEntryWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9B4DAFE5B46A1A430B2EAEE9 /* WidgetEntryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A828D91B92FF475223DA97D /* WidgetEntryStore.swift */; };
+		9C02A258E646577F9D2C1123 /* PersonalKakeiboApplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */; };
 		9DE8C0954D444D9BCA6E9FDE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E0F01944619002308129F92B /* PrivacyInfo.xcprivacy */; };
+		A0BE06108AB4A162423E8725 /* PersonalKakeiboDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */; };
 		A47B2A058AF032CD38467B17 /* PersonalKakeiboDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */; };
 		A71D4CBCC0395BD92618ABDF /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CED032540090662515CE348 /* NotificationSettingsView.swift */; };
+		A7DC580E1FA873B1E07400E3 /* FinanceUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61FB4E49A18E732810B496C /* FinanceUseCases.swift */; };
+		A8697D86A332071CC6CE1596 /* InlineWidgetDisabledButtonsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77E656AFA59F395DB204CD8 /* InlineWidgetDisabledButtonsUITests.swift */; };
 		A940A7A57C0E8E22B0DBB811 /* BackupFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = C252A1471FA76A6CD242BD19 /* BackupFormat.swift */; };
+		A952EC0BFDDAAE774830CBD5 /* QuickExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4269A35824BB3984C1F34192 /* QuickExpenseView.swift */; };
 		ABC96199ADF2C3360419F4D8 /* PlanningUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = F010D4CEB915E17887374C8E /* PlanningUseCases.swift */; };
+		AC7AE873DE1B5B6FBA2DC863 /* EntryWidgetIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3144A87A604AB5C408D9D0A /* EntryWidgetIntent.swift */; };
+		AE0B1566F3EA7367C6AB1263 /* QuickExpenseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52002D63A0E5374209E17F5 /* QuickExpenseUITests.swift */; };
 		AF23632949A7F924B014D568 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D77BE208827F5239B856E /* SettingsView.swift */; };
 		B35FB90BFB1059F7AD6B8E63 /* Repositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A90F4C99727D2F65E9BA4D /* Repositories.swift */; };
+		B86905F9082DEA0F11C2692A /* WidgetRegistrationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15654A5D39DC6E33A08D2CC /* WidgetRegistrationUITests.swift */; };
+		BA306FB38B18DE03A71265E7 /* KakeiboEntryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227DDCAA58A410827E664E32 /* KakeiboEntryWidget.swift */; };
 		BD62E68A282C66905C8FBD24 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDB9E2DEDB757078D48210BC /* Models.swift */; };
 		C0135C2AF699D83D441207E0 /* PersonalKakeiboDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C077E156A066CB26F74541A8 /* DevicePreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3834A3AD4A8248DBB1D4FA0 /* DevicePreferences.swift */; };
+		C298D4F49784FD651393D28E /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5530B9AD3B4122F5BCBECA9 /* SharedStore.swift */; };
 		C4D4381E71C49D4E9E6F7ACF /* Calculations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9015E7B8BD8C5F9D2037A3CE /* Calculations.swift */; };
+		C75855519A0F540A313F81A0 /* LifeCostIntegration in Frameworks */ = {isa = PBXBuildFile; productRef = 1ADD717043E1393959DD9F9C /* LifeCostIntegration */; };
+		CDFC17AD10007C3594CF3E5C /* FinanceRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9340008697528539097481B6 /* FinanceRules.swift */; };
+		D1ADCDE2A5081649212EB29A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B5393276B03952AC01DA68EA /* PrivacyInfo.xcprivacy */; };
+		D568206FB624EC4421690E7B /* WidgetEntryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A828D91B92FF475223DA97D /* WidgetEntryStore.swift */; };
+		D74D2DBA63F6118932C00CCE /* EntryWidgetIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3144A87A604AB5C408D9D0A /* EntryWidgetIntent.swift */; };
 		DC26821490C4CEC15B0ACEB6 /* SettingsUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1205E63CFE9B3B7FD69EDF40 /* SettingsUseCases.swift */; };
 		DCAC1D845A3519C57F621D11 /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7497F69C8D4F5D11BC05B2A /* Planning.swift */; };
+		DCFB9E227BA3B51FDB215DB9 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA78B0E1400A946FD140EB /* Store.swift */; };
+		E040C15637AD149D29EF500A /* FinanceAssetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2CB72DD06F706216133293 /* FinanceAssetsView.swift */; };
 		E0C8555A1C121FD64559983A /* RemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C3D9E0F9250F4F397DD853 /* RemindersView.swift */; };
+		E1BD67C5EC73A666EC390D45 /* SubscriptionServicePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF46B2C5C4E478784379686 /* SubscriptionServicePickerView.swift */; };
+		E6E2D8A0EFEE30E165A5BA20 /* StoredModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D5A55970E78B5F0CE5B9FC /* StoredModels.swift */; };
+		E9C007FB28A73418FFEE2839 /* QuickEntryRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2F9B61AF4B0FF71F109EE8 /* QuickEntryRoute.swift */; };
+		ED37AF38E337E3CE91D4B11F /* LifeCostPayments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E66174629E15A9F7D216FBC /* LifeCostPayments.swift */; };
+		F5F60CAB3A0AF1B867D5F7F8 /* WidgetEntryUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52E30369248DC5E74EE775A /* WidgetEntryUseCases.swift */; };
+		FBA811C4EE846CBD5B79D266 /* WidgetEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C2F3109E5CCC1BA366E3D7 /* WidgetEntry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		342F29471C311528DB223FCE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94298936B280D0CBE53634CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81743EF54B151FA2219B8601;
+			remoteInfo = PersonalKakeiboApplication;
+		};
 		4BC246319622FEE1618DAEDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 94298936B280D0CBE53634CB /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B04B31B5DCC3D2382E7482D9;
 			remoteInfo = PersonalKakeiboDomain;
+		};
+		64CB2E93BAF570505DE3B328 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94298936B280D0CBE53634CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B04B31B5DCC3D2382E7482D9;
+			remoteInfo = PersonalKakeiboDomain;
+		};
+		6A0E72AA2EF9D3FB2BB8769B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94298936B280D0CBE53634CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB61236896FE92A389A63A79;
+			remoteInfo = PersonalKakeibo;
 		};
 		6B0650858917793E6CEF65CD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -61,9 +124,27 @@
 			remoteGlobalIDString = 81743EF54B151FA2219B8601;
 			remoteInfo = PersonalKakeiboApplication;
 		};
+		D2F71A8EF59359FCAD524C24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94298936B280D0CBE53634CB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C32111F2CAFB1C3933ED53FE;
+			remoteInfo = KakeiboEntryWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		C7D276B7D688D2CA4CDE0D07 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9ADA906157DE0F0CE7EF4C34 /* KakeiboEntryWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C82B886BC2F20B7250A7F2B0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -81,31 +162,63 @@
 /* Begin PBXFileReference section */
 		1205E63CFE9B3B7FD69EDF40 /* SettingsUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUseCases.swift; sourceTree = "<group>"; };
 		1621A78BF1EF7762CF0E99AB /* PersonalKakeiboApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalKakeiboApp.swift; sourceTree = "<group>"; };
+		1EF46B2C5C4E478784379686 /* SubscriptionServicePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionServicePickerView.swift; sourceTree = "<group>"; };
+		227DDCAA58A410827E664E32 /* KakeiboEntryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakeiboEntryWidget.swift; sourceTree = "<group>"; };
 		25D3E45094888AE1E8468662 /* CloudAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAccount.swift; sourceTree = "<group>"; };
 		283D180E8A0A3AA8F14276EC /* BudgetSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetSettingsView.swift; sourceTree = "<group>"; };
+		2A828D91B92FF475223DA97D /* WidgetEntryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntryStore.swift; sourceTree = "<group>"; };
 		3CED032540090662515CE348 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		41E06F44C5FCA4951F1F03FB /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
+		4269A35824BB3984C1F34192 /* QuickExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickExpenseView.swift; sourceTree = "<group>"; };
 		42D5A55970E78B5F0CE5B9FC /* StoredModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredModels.swift; sourceTree = "<group>"; };
+		45DE0B1021A4DA52075162BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4E166B4D24E3DD414B77A081 /* ReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
 		50A90F4C99727D2F65E9BA4D /* Repositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repositories.swift; sourceTree = "<group>"; };
+		51C2F3109E5CCC1BA366E3D7 /* WidgetEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntry.swift; sourceTree = "<group>"; };
+		59B20BD946EADF457AD497AE /* LifeCostIntegration */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LifeCostIntegration; path = LocalPackages/LifeCostIntegration; sourceTree = SOURCE_ROOT; };
 		5DAA78B0E1400A946FD140EB /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		65C3D9E0F9250F4F397DD853 /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
+		76F48B0030EEA9A6F2844F03 /* PersonalKakeiboUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PersonalKakeiboUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		79920342B6856C13BB04F646 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7E66174629E15A9F7D216FBC /* LifeCostPayments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCostPayments.swift; sourceTree = "<group>"; };
+		850F05BE7D0F473BC08F7331 /* SharedStoreLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStoreLock.swift; sourceTree = "<group>"; };
 		8DF6BDE3F3639DA1F0F303B1 /* PersonalKakeibo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PersonalKakeibo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9015E7B8BD8C5F9D2037A3CE /* Calculations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculations.swift; sourceTree = "<group>"; };
 		91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PersonalKakeiboApplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9340008697528539097481B6 /* FinanceRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceRules.swift; sourceTree = "<group>"; };
 		9C5D77BE208827F5239B856E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PersonalKakeiboDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegratedFinance.swift; sourceTree = "<group>"; };
+		A77E656AFA59F395DB204CD8 /* InlineWidgetDisabledButtonsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineWidgetDisabledButtonsUITests.swift; sourceTree = "<group>"; };
 		AA60CB83B18B0B4B9909EDE7 /* ReminderSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSlot.swift; sourceTree = "<group>"; };
+		B15654A5D39DC6E33A08D2CC /* WidgetRegistrationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetRegistrationUITests.swift; sourceTree = "<group>"; };
+		B23FFFB86B1783D5905C920C /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		B5393276B03952AC01DA68EA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B577D8F8BE2A950CA22ED63F /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
 		C252A1471FA76A6CD242BD19 /* BackupFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupFormat.swift; sourceTree = "<group>"; };
 		C4EFAFCA7FB4F4A1409AB7A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C52E30369248DC5E74EE775A /* WidgetEntryUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntryUseCases.swift; sourceTree = "<group>"; };
+		CA6D63F048F927C239E92CC9 /* FinanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceViewModel.swift; sourceTree = "<group>"; };
+		CB2CB72DD06F706216133293 /* FinanceAssetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceAssetsView.swift; sourceTree = "<group>"; };
+		CB5355B7697C345DD9FDA59A /* KakeiboEntryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KakeiboEntryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7497F69C8D4F5D11BC05B2A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
+		DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceContractsView.swift; sourceTree = "<group>"; };
 		DFF6988D671161D63626E4B3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E0F01944619002308129F92B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E52002D63A0E5374209E17F5 /* QuickExpenseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickExpenseUITests.swift; sourceTree = "<group>"; };
+		E5530B9AD3B4122F5BCBECA9 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		E59315194236ECC3A519DDEF /* KakeiboViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakeiboViewModel.swift; sourceTree = "<group>"; };
+		E62D4B787FDA0A9BBA482EA1 /* QuickExpenseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickExpenseViewModel.swift; sourceTree = "<group>"; };
+		ED2F9B61AF4B0FF71F109EE8 /* QuickEntryRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickEntryRoute.swift; sourceTree = "<group>"; };
 		EFB8CF98A5DBD4E078F5D6AC /* TransactionUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionUseCases.swift; sourceTree = "<group>"; };
 		F010D4CEB915E17887374C8E /* PlanningUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanningUseCases.swift; sourceTree = "<group>"; };
+		F05D70619BD35CB58E5F9804 /* FreshStartNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreshStartNavigationUITests.swift; sourceTree = "<group>"; };
 		F14413FD65E36001048677A1 /* EntryControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryControls.swift; sourceTree = "<group>"; };
+		F3144A87A604AB5C408D9D0A /* EntryWidgetIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryWidgetIntent.swift; sourceTree = "<group>"; };
 		F3834A3AD4A8248DBB1D4FA0 /* DevicePreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePreferences.swift; sourceTree = "<group>"; };
+		F61FB4E49A18E732810B496C /* FinanceUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceUseCases.swift; sourceTree = "<group>"; };
+		F9F0082A51F1F35D0EDB4399 /* FinanceHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceHubView.swift; sourceTree = "<group>"; };
+		FBFC39445DABF39B117DB029 /* SubscriptionServiceSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionServiceSelectionUITests.swift; sourceTree = "<group>"; };
 		FDB9E2DEDB757078D48210BC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -115,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F43751B023210B1800EBB6B /* PersonalKakeiboDomain.framework in Frameworks */,
+				3EE1EEFDF6887787ABFF4A1B /* LifeCostIntegration in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,8 +236,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C75855519A0F540A313F81A0 /* LifeCostIntegration in Frameworks */,
 				A47B2A058AF032CD38467B17 /* PersonalKakeiboDomain.framework in Frameworks */,
 				4B6E23B7D28910E9DA52D4BF /* PersonalKakeiboApplication.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEAA8EF1541C0EB78AE08053 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0BE06108AB4A162423E8725 /* PersonalKakeiboDomain.framework in Frameworks */,
+				9C02A258E646577F9D2C1123 /* PersonalKakeiboApplication.framework in Frameworks */,
+				1FC0CBEE05C66572CD829E01 /* LifeCostIntegration in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B907D61ADA643802540F6EC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86525183D5C03DBB269B965E /* LifeCostIntegration in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,10 +269,17 @@
 				283D180E8A0A3AA8F14276EC /* BudgetSettingsView.swift */,
 				DFF6988D671161D63626E4B3 /* ContentView.swift */,
 				F14413FD65E36001048677A1 /* EntryControls.swift */,
+				CB2CB72DD06F706216133293 /* FinanceAssetsView.swift */,
+				DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */,
+				F9F0082A51F1F35D0EDB4399 /* FinanceHubView.swift */,
+				CA6D63F048F927C239E92CC9 /* FinanceViewModel.swift */,
 				E59315194236ECC3A519DDEF /* KakeiboViewModel.swift */,
 				3CED032540090662515CE348 /* NotificationSettingsView.swift */,
+				4269A35824BB3984C1F34192 /* QuickExpenseView.swift */,
+				E62D4B787FDA0A9BBA482EA1 /* QuickExpenseViewModel.swift */,
 				65C3D9E0F9250F4F397DD853 /* RemindersView.swift */,
 				9C5D77BE208827F5239B856E /* SettingsView.swift */,
+				1EF46B2C5C4E478784379686 /* SubscriptionServicePickerView.swift */,
 			);
 			name = Presentation;
 			path = PersonalKakeibo/Presentation;
@@ -148,9 +288,11 @@
 		0B9F4108CB9AF548FFC2CFF1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				CB5355B7697C345DD9FDA59A /* KakeiboEntryWidget.appex */,
 				8DF6BDE3F3639DA1F0F303B1 /* PersonalKakeibo.app */,
 				91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */,
 				9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */,
+				76F48B0030EEA9A6F2844F03 /* PersonalKakeiboUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,23 +300,49 @@
 		11565BA6467014F38E89ECE1 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				F61FB4E49A18E732810B496C /* FinanceUseCases.swift */,
 				F010D4CEB915E17887374C8E /* PlanningUseCases.swift */,
 				1205E63CFE9B3B7FD69EDF40 /* SettingsUseCases.swift */,
 				EFB8CF98A5DBD4E078F5D6AC /* TransactionUseCases.swift */,
+				C52E30369248DC5E74EE775A /* WidgetEntryUseCases.swift */,
 			);
 			name = Application;
 			path = PersonalKakeibo/Application;
 			sourceTree = "<group>";
 		};
+		5A2671625C546D7C8869D0BB /* WidgetSupport */ = {
+			isa = PBXGroup;
+			children = (
+				F3144A87A604AB5C408D9D0A /* EntryWidgetIntent.swift */,
+			);
+			name = WidgetSupport;
+			path = PersonalKakeibo/WidgetSupport;
+			sourceTree = "<group>";
+		};
 		5CFD119922FE92A4B1FD2E94 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				B23FFFB86B1783D5905C920C /* App.entitlements */,
 				C4EFAFCA7FB4F4A1409AB7A3 /* Assets.xcassets */,
+				45DE0B1021A4DA52075162BE /* Info.plist */,
 				1621A78BF1EF7762CF0E99AB /* PersonalKakeiboApp.swift */,
 				E0F01944619002308129F92B /* PrivacyInfo.xcprivacy */,
 			);
 			name = App;
 			path = PersonalKakeibo/App;
+			sourceTree = "<group>";
+		};
+		66517F1C6453B10594512D8D /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				F05D70619BD35CB58E5F9804 /* FreshStartNavigationUITests.swift */,
+				A77E656AFA59F395DB204CD8 /* InlineWidgetDisabledButtonsUITests.swift */,
+				E52002D63A0E5374209E17F5 /* QuickExpenseUITests.swift */,
+				FBFC39445DABF39B117DB029 /* SubscriptionServiceSelectionUITests.swift */,
+				B15654A5D39DC6E33A08D2CC /* WidgetRegistrationUITests.swift */,
+			);
+			name = UITests;
+			path = Tests/UITests;
 			sourceTree = "<group>";
 		};
 		8FAE0CF614EDC202CC52E980 /* Infrastructure */ = {
@@ -184,8 +352,11 @@
 				25D3E45094888AE1E8468662 /* CloudAccount.swift */,
 				F3834A3AD4A8248DBB1D4FA0 /* DevicePreferences.swift */,
 				4E166B4D24E3DD414B77A081 /* ReminderService.swift */,
+				E5530B9AD3B4122F5BCBECA9 /* SharedStore.swift */,
+				850F05BE7D0F473BC08F7331 /* SharedStoreLock.swift */,
 				5DAA78B0E1400A946FD140EB /* Store.swift */,
 				42D5A55970E78B5F0CE5B9FC /* StoredModels.swift */,
+				2A828D91B92FF475223DA97D /* WidgetEntryStore.swift */,
 			);
 			name = Infrastructure;
 			path = PersonalKakeibo/Infrastructure;
@@ -195,14 +366,38 @@
 			isa = PBXGroup;
 			children = (
 				9015E7B8BD8C5F9D2037A3CE /* Calculations.swift */,
+				9340008697528539097481B6 /* FinanceRules.swift */,
+				A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */,
+				7E66174629E15A9F7D216FBC /* LifeCostPayments.swift */,
 				FDB9E2DEDB757078D48210BC /* Models.swift */,
 				B577D8F8BE2A950CA22ED63F /* Month.swift */,
 				D7497F69C8D4F5D11BC05B2A /* Planning.swift */,
+				ED2F9B61AF4B0FF71F109EE8 /* QuickEntryRoute.swift */,
 				AA60CB83B18B0B4B9909EDE7 /* ReminderSlot.swift */,
 				50A90F4C99727D2F65E9BA4D /* Repositories.swift */,
+				51C2F3109E5CCC1BA366E3D7 /* WidgetEntry.swift */,
 			);
 			name = Domain;
 			path = PersonalKakeibo/Domain;
+			sourceTree = "<group>";
+		};
+		C23722E84D2D22467008F607 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				59B20BD946EADF457AD497AE /* LifeCostIntegration */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		CE6FA0911FD6713C61D8A1DA /* PersonalKakeiboWidget */ = {
+			isa = PBXGroup;
+			children = (
+				79920342B6856C13BB04F646 /* Info.plist */,
+				227DDCAA58A410827E664E32 /* KakeiboEntryWidget.swift */,
+				B5393276B03952AC01DA68EA /* PrivacyInfo.xcprivacy */,
+				41E06F44C5FCA4951F1F03FB /* Widget.entitlements */,
+			);
+			path = PersonalKakeiboWidget;
 			sourceTree = "<group>";
 		};
 		CF1B851D22E7242DF7749181 = {
@@ -212,7 +407,11 @@
 				11565BA6467014F38E89ECE1 /* Application */,
 				99DF606238ED203923B70B08 /* Domain */,
 				8FAE0CF614EDC202CC52E980 /* Infrastructure */,
+				C23722E84D2D22467008F607 /* Packages */,
+				CE6FA0911FD6713C61D8A1DA /* PersonalKakeiboWidget */,
 				0165498EF8917A7BE382BE62 /* Presentation */,
+				66517F1C6453B10594512D8D /* UITests */,
+				5A2671625C546D7C8869D0BB /* WidgetSupport */,
 				0B9F4108CB9AF548FFC2CFF1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -234,6 +433,7 @@
 			);
 			name = PersonalKakeiboApplication;
 			packageProductDependencies = (
+				B0024E2F9E125F71E1F9018E /* LifeCostIntegration */,
 			);
 			productName = PersonalKakeiboApplication;
 			productReference = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */;
@@ -244,6 +444,7 @@
 			buildConfigurationList = 3CC1815E1C1C8C2ECAECA9BD /* Build configuration list for PBXNativeTarget "PersonalKakeiboDomain" */;
 			buildPhases = (
 				945C9CA05E8D3EF1BC9203CD /* Sources */,
+				B907D61ADA643802540F6EC9 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -251,10 +452,51 @@
 			);
 			name = PersonalKakeiboDomain;
 			packageProductDependencies = (
+				0F2A9EDCD1F1B0D57749F4B9 /* LifeCostIntegration */,
 			);
 			productName = PersonalKakeiboDomain;
 			productReference = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		C32111F2CAFB1C3933ED53FE /* KakeiboEntryWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD6E293F4DDFE0D4AD950FF7 /* Build configuration list for PBXNativeTarget "KakeiboEntryWidget" */;
+			buildPhases = (
+				6C5A0F7079485A53C84C6523 /* Sources */,
+				D25E8E7EB12681809496C75A /* Resources */,
+				AEAA8EF1541C0EB78AE08053 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8125943A04633EE41F3BB1DF /* PBXTargetDependency */,
+				7D51CA0D04B5B8B4575637AB /* PBXTargetDependency */,
+			);
+			name = KakeiboEntryWidget;
+			packageProductDependencies = (
+				75E5C7E34DD667CDCBB617E2 /* LifeCostIntegration */,
+			);
+			productName = KakeiboEntryWidget;
+			productReference = CB5355B7697C345DD9FDA59A /* KakeiboEntryWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		C8BE20727358138F539EAF92 /* PersonalKakeiboUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF6A4948203200F07748B5A6 /* Build configuration list for PBXNativeTarget "PersonalKakeiboUITests" */;
+			buildPhases = (
+				5BD0C0F8642B5E6FBF514527 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4719CDF396DD23045B279ED7 /* PBXTargetDependency */,
+			);
+			name = PersonalKakeiboUITests;
+			packageProductDependencies = (
+			);
+			productName = PersonalKakeiboUITests;
+			productReference = 76F48B0030EEA9A6F2844F03 /* PersonalKakeiboUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		FB61236896FE92A389A63A79 /* PersonalKakeibo */ = {
 			isa = PBXNativeTarget;
@@ -263,16 +505,19 @@
 				532D94320332985B2843DA97 /* Sources */,
 				257AAC3935FAEC1C91F08625 /* Resources */,
 				99DDE81E07EBE965CB705D5A /* Frameworks */,
+				C7D276B7D688D2CA4CDE0D07 /* Embed Foundation Extensions */,
 				C82B886BC2F20B7250A7F2B0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FBE309408E2370D647186916 /* PBXTargetDependency */,
 				8C04A4E90DB630963CFFC7B6 /* PBXTargetDependency */,
 				C765C25190F5561ECF2EF050 /* PBXTargetDependency */,
 			);
 			name = PersonalKakeibo;
 			packageProductDependencies = (
+				1ADD717043E1393959DD9F9C /* LifeCostIntegration */,
 			);
 			productName = PersonalKakeibo;
 			productReference = 8DF6BDE3F3639DA1F0F303B1 /* PersonalKakeibo.app */;
@@ -285,8 +530,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					81743EF54B151FA2219B8601 = {
+					};
+					B04B31B5DCC3D2382E7482D9 = {
+					};
+					C32111F2CAFB1C3933ED53FE = {
+					};
+					C8BE20727358138F539EAF92 = {
+						TestTargetID = FB61236896FE92A389A63A79;
+					};
 					FB61236896FE92A389A63A79 = {
 					};
 				};
@@ -300,6 +554,9 @@
 			);
 			mainGroup = CF1B851D22E7242DF7749181;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3C2A8836A3D11FED52BAD9C4 /* XCLocalSwiftPackageReference "LocalPackages/LifeCostIntegration" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0B9F4108CB9AF548FFC2CFF1 /* Products */;
 			projectDirPath = "";
@@ -308,6 +565,8 @@
 				B04B31B5DCC3D2382E7482D9 /* PersonalKakeiboDomain */,
 				81743EF54B151FA2219B8601 /* PersonalKakeiboApplication */,
 				FB61236896FE92A389A63A79 /* PersonalKakeibo */,
+				C32111F2CAFB1C3933ED53FE /* KakeiboEntryWidget */,
+				C8BE20727358138F539EAF92 /* PersonalKakeiboUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -319,6 +578,14 @@
 			files = (
 				96FDF5A3E3504361586DE567 /* Assets.xcassets in Resources */,
 				9DE8C0954D444D9BCA6E9FDE /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D25E8E7EB12681809496C75A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1ADCDE2A5081649212EB29A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,14 +602,55 @@
 				98EEB365D1E4C68CF8DD49A0 /* ContentView.swift in Sources */,
 				330457F7FEC84912ECD0EE7E /* DevicePreferences.swift in Sources */,
 				6B55886D0EAB98F314E9E022 /* EntryControls.swift in Sources */,
+				D74D2DBA63F6118932C00CCE /* EntryWidgetIntent.swift in Sources */,
+				E040C15637AD149D29EF500A /* FinanceAssetsView.swift in Sources */,
+				4DF1D2BCE1EB283D77E955F3 /* FinanceContractsView.swift in Sources */,
+				6671F464E34583B3FD8D2AE2 /* FinanceHubView.swift in Sources */,
+				0364E797F320A92BFD81B07C /* FinanceViewModel.swift in Sources */,
 				831E4CD698E70246C4861B32 /* KakeiboViewModel.swift in Sources */,
 				A71D4CBCC0395BD92618ABDF /* NotificationSettingsView.swift in Sources */,
 				90B58DDBD32797B926D06636 /* PersonalKakeiboApp.swift in Sources */,
+				A952EC0BFDDAAE774830CBD5 /* QuickExpenseView.swift in Sources */,
+				7B5807A6AB263898F9D63611 /* QuickExpenseViewModel.swift in Sources */,
 				1AE7358BC7C0BF019B633D6B /* ReminderService.swift in Sources */,
 				E0C8555A1C121FD64559983A /* RemindersView.swift in Sources */,
 				AF23632949A7F924B014D568 /* SettingsView.swift in Sources */,
+				0FD8C4393BCD291BFF58BE6F /* SharedStore.swift in Sources */,
+				1888DF8A59A9E2CEC655B581 /* SharedStoreLock.swift in Sources */,
 				6FFBA36763859921AA5BABC9 /* Store.swift in Sources */,
 				159B43D3DE694246E7C25B95 /* StoredModels.swift in Sources */,
+				E1BD67C5EC73A666EC390D45 /* SubscriptionServicePickerView.swift in Sources */,
+				9B4DAFE5B46A1A430B2EAEE9 /* WidgetEntryStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BD0C0F8642B5E6FBF514527 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A0576A0CDDB26B85E12F3AC /* FreshStartNavigationUITests.swift in Sources */,
+				A8697D86A332071CC6CE1596 /* InlineWidgetDisabledButtonsUITests.swift in Sources */,
+				AE0B1566F3EA7367C6AB1263 /* QuickExpenseUITests.swift in Sources */,
+				93F1D6204FFB7ABB0A1A78BA /* SubscriptionServiceSelectionUITests.swift in Sources */,
+				B86905F9082DEA0F11C2692A /* WidgetRegistrationUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6C5A0F7079485A53C84C6523 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				557EBC4321E358465D84260E /* BackupFormat.swift in Sources */,
+				8F0F99B651DB335D9D56BB39 /* CloudAccount.swift in Sources */,
+				C077E156A066CB26F74541A8 /* DevicePreferences.swift in Sources */,
+				AC7AE873DE1B5B6FBA2DC863 /* EntryWidgetIntent.swift in Sources */,
+				BA306FB38B18DE03A71265E7 /* KakeiboEntryWidget.swift in Sources */,
+				0E5050CC0F57392708F9AC3E /* ReminderService.swift in Sources */,
+				C298D4F49784FD651393D28E /* SharedStore.swift in Sources */,
+				59A60B2CD0F427868D4A32A2 /* SharedStoreLock.swift in Sources */,
+				DCFB9E227BA3B51FDB215DB9 /* Store.swift in Sources */,
+				E6E2D8A0EFEE30E165A5BA20 /* StoredModels.swift in Sources */,
+				D568206FB624EC4421690E7B /* WidgetEntryStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,11 +659,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				C4D4381E71C49D4E9E6F7ACF /* Calculations.swift in Sources */,
+				CDFC17AD10007C3594CF3E5C /* FinanceRules.swift in Sources */,
+				4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */,
+				ED37AF38E337E3CE91D4B11F /* LifeCostPayments.swift in Sources */,
 				BD62E68A282C66905C8FBD24 /* Models.swift in Sources */,
 				3BF481AA60CF10956ADC7B5B /* Month.swift in Sources */,
 				DCAC1D845A3519C57F621D11 /* Planning.swift in Sources */,
+				E9C007FB28A73418FFEE2839 /* QuickEntryRoute.swift in Sources */,
 				8DBF23D3132C347FB150A7B5 /* ReminderSlot.swift in Sources */,
 				B35FB90BFB1059F7AD6B8E63 /* Repositories.swift in Sources */,
+				FBA811C4EE846CBD5B79D266 /* WidgetEntry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,19 +676,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7DC580E1FA873B1E07400E3 /* FinanceUseCases.swift in Sources */,
 				ABC96199ADF2C3360419F4D8 /* PlanningUseCases.swift in Sources */,
 				DC26821490C4CEC15B0ACEB6 /* SettingsUseCases.swift in Sources */,
 				0C7A6BF5095B38851E1BD029 /* TransactionUseCases.swift in Sources */,
+				F5F60CAB3A0AF1B867D5F7F8 /* WidgetEntryUseCases.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4719CDF396DD23045B279ED7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB61236896FE92A389A63A79 /* PersonalKakeibo */;
+			targetProxy = 6A0E72AA2EF9D3FB2BB8769B /* PBXContainerItemProxy */;
+		};
 		64A9FDAE222C5EA10B073122 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B04B31B5DCC3D2382E7482D9 /* PersonalKakeiboDomain */;
 			targetProxy = 4BC246319622FEE1618DAEDD /* PBXContainerItemProxy */;
+		};
+		7D51CA0D04B5B8B4575637AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81743EF54B151FA2219B8601 /* PersonalKakeiboApplication */;
+			targetProxy = 342F29471C311528DB223FCE /* PBXContainerItemProxy */;
+		};
+		8125943A04633EE41F3BB1DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B04B31B5DCC3D2382E7482D9 /* PersonalKakeiboDomain */;
+			targetProxy = 64CB2E93BAF570505DE3B328 /* PBXContainerItemProxy */;
 		};
 		8C04A4E90DB630963CFFC7B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -387,6 +717,11 @@
 			target = 81743EF54B151FA2219B8601 /* PersonalKakeiboApplication */;
 			targetProxy = BDA1126196C176E86F80B28E /* PBXContainerItemProxy */;
 		};
+		FBE309408E2370D647186916 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C32111F2CAFB1C3933ED53FE /* KakeiboEntryWidget */;
+			targetProxy = D2F71A8EF59359FCAD524C24 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -394,9 +729,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PersonalKakeibo/App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PersonalKakeibo/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "家計簿";
+				INFOPLIST_KEY_KakeiboAppGroup = "$(KAKEIBO_APP_GROUP)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -405,7 +743,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.PersonalKakeibo;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(KAKEIBO_BUNDLE_ID)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -486,6 +824,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KAKEIBO_APP_GROUP = group.com.example.PersonalKakeibo.shared;
+				KAKEIBO_BUNDLE_ID = com.example.PersonalKakeibo;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -496,6 +836,80 @@
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
+		};
+		6BC611012617772F35D758BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = PersonalKakeiboWidget/Widget.entitlements;
+				INFOPLIST_FILE = PersonalKakeiboWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "支出を登録";
+				INFOPLIST_KEY_KakeiboAppGroup = "$(KAKEIBO_APP_GROUP)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(KAKEIBO_BUNDLE_ID).Widget";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E4DCE516C2B14D99F0BD076 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = PersonalKakeiboWidget/Widget.entitlements;
+				INFOPLIST_FILE = PersonalKakeiboWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "支出を登録";
+				INFOPLIST_KEY_KakeiboAppGroup = "$(KAKEIBO_APP_GROUP)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(KAKEIBO_BUNDLE_ID).Widget";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		78BA863721F83FD043730DB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PersonalKakeiboUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PersonalKakeibo;
+			};
+			name = Debug;
+		};
+		83C734EB2DF12902F0609116 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PersonalKakeiboUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PersonalKakeibo;
+			};
+			name = Release;
 		};
 		94C99B43B20CF82E9A60F301 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -543,6 +957,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				KAKEIBO_APP_GROUP = group.com.example.PersonalKakeibo.shared;
+				KAKEIBO_BUNDLE_ID = com.example.PersonalKakeibo;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -603,9 +1019,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PersonalKakeibo/App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PersonalKakeibo/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "家計簿";
+				INFOPLIST_KEY_KakeiboAppGroup = "$(KAKEIBO_APP_GROUP)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -614,7 +1033,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.PersonalKakeibo;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(KAKEIBO_BUNDLE_ID)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -664,11 +1083,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		AD6E293F4DDFE0D4AD950FF7 /* Build configuration list for PBXNativeTarget "KakeiboEntryWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BC611012617772F35D758BD /* Debug */,
+				6E4DCE516C2B14D99F0BD076 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		C05681BC903FD6715872B827 /* Build configuration list for PBXNativeTarget "PersonalKakeibo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				325B49C63A1320F8B6A879D4 /* Debug */,
 				E0A426EBF0FB1FEDE15E5C8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CF6A4948203200F07748B5A6 /* Build configuration list for PBXNativeTarget "PersonalKakeiboUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78BA863721F83FD043730DB3 /* Debug */,
+				83C734EB2DF12902F0609116 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -683,6 +1120,32 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		3C2A8836A3D11FED52BAD9C4 /* XCLocalSwiftPackageReference "LocalPackages/LifeCostIntegration" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = LocalPackages/LifeCostIntegration;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0F2A9EDCD1F1B0D57749F4B9 /* LifeCostIntegration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LifeCostIntegration;
+		};
+		1ADD717043E1393959DD9F9C /* LifeCostIntegration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LifeCostIntegration;
+		};
+		75E5C7E34DD667CDCBB617E2 /* LifeCostIntegration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LifeCostIntegration;
+		};
+		B0024E2F9E125F71E1F9018E /* LifeCostIntegration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LifeCostIntegration;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 94298936B280D0CBE53634CB /* Project object */;
 }

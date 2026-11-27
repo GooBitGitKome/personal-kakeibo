@@ -101,12 +101,85 @@ enum KakeiboSchemaV1: VersionedSchema {
     }
 }
 
-enum KakeiboSchema: VersionedSchema {
+enum KakeiboSchemaV2: VersionedSchema {
     static var versionIdentifier: Schema.Version { .init(2, 0, 0) }
     static var models: [any PersistentModel.Type] { KakeiboSchemaV1.models + [StoredPlanningRecord.self] }
 }
 
 enum KakeiboMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [KakeiboSchemaV1.self, KakeiboSchema.self] }
-    static var stages: [MigrationStage] { [.lightweight(fromVersion: KakeiboSchemaV1.self, toVersion: KakeiboSchema.self)] }
+    static var schemas: [any VersionedSchema.Type] { [KakeiboSchemaV1.self, KakeiboSchemaV2.self, KakeiboSchemaV3.self, KakeiboSchemaV4.self, KakeiboSchema.self] }
+    static var stages: [MigrationStage] {
+        [.lightweight(fromVersion: KakeiboSchemaV1.self, toVersion: KakeiboSchemaV2.self),
+         .lightweight(fromVersion: KakeiboSchemaV2.self, toVersion: KakeiboSchemaV3.self),
+         .lightweight(fromVersion: KakeiboSchemaV3.self, toVersion: KakeiboSchemaV4.self),
+         .lightweight(fromVersion: KakeiboSchemaV4.self, toVersion: KakeiboSchema.self)]
+    }
+}
+
+@Model final class StoredLifeCostPayment {
+    var id: UUID = UUID()
+    var payload: Data = Data()
+    init(_ value: ImportedPayment) throws { id = value.id; payload = try JSONEncoder().encode(value) }
+    func value() throws -> ImportedPayment {
+        let value = try JSONDecoder().decode(ImportedPayment.self, from: payload)
+        guard value.id == id else { throw StoreError.invalidData }; return value
+    }
+}
+@Model final class StoredLifeCostSetting {
+    var id: UUID = UUID()
+    var payload: Data = Data()
+    init(_ value: LifeCostSetting) throws { id = value.id; payload = try JSONEncoder().encode(value) }
+    func value() throws -> LifeCostSetting {
+        let value = try JSONDecoder().decode(LifeCostSetting.self, from: payload)
+        guard value.id == id else { throw StoreError.invalidData }; return value
+    }
+}
+enum KakeiboSchemaV3: VersionedSchema {
+    static var versionIdentifier: Schema.Version { .init(3,0,0) }
+    static var models: [any PersistentModel.Type] { KakeiboSchemaV2.models + [StoredLifeCostPayment.self, StoredLifeCostSetting.self, StoredSavingsFlag.self] }
+}
+
+// A separate entity keeps the historical v1/v2 transaction schema checksums intact.
+@Model final class StoredSavingsFlag {
+    var transactionId: UUID = UUID()
+    var isSavingsEligible: Bool = false
+    init(transactionId: UUID, isSavingsEligible: Bool) { self.transactionId = transactionId; self.isSavingsEligible = isSavingsEligible }
+}
+
+@Model final class StoredFinanceState {
+    var id: UUID = UUID()
+    var payload: Data = Data()
+    init(_ value: FinanceState) throws {
+        id = Self.fixedID
+        payload = try JSONEncoder().encode(value)
+    }
+    static let fixedID = UUID(uuidString: "8F0C6401-6B5D-4DFE-A8DA-72222CC94A38")!
+    func value() throws -> FinanceState {
+        guard id == Self.fixedID else { throw FinanceError.invalid }
+        return try JSONDecoder().decode(FinanceState.self, from: payload)
+    }
+}
+
+enum KakeiboSchemaV4: VersionedSchema {
+    static var versionIdentifier: Schema.Version { .init(4,0,0) }
+    static var models: [any PersistentModel.Type] { KakeiboSchemaV3.models + [StoredFinanceState.self] }
+}
+
+// Per-installation widget draft and commit receipt; excluded from financial backups.
+@Model final class StoredWidgetEntry {
+    var deviceID: UUID = UUID()
+    var payload: Data = Data()
+    init(deviceID: UUID, state: WidgetEntryState) throws {
+        self.deviceID = deviceID; payload = try JSONEncoder().encode(state)
+    }
+}
+
+enum KakeiboSchema: VersionedSchema {
+    static var versionIdentifier: Schema.Version { .init(5,0,0) }
+    static var models: [any PersistentModel.Type] { KakeiboSchemaV4.models + [StoredWidgetEntry.self] }
+}
+
+enum KakeiboLegacyMigrationPlan: SchemaMigrationPlan {
+    static var schemas: [any VersionedSchema.Type] { Array(KakeiboMigrationPlan.schemas.dropLast()) }
+    static var stages: [MigrationStage] { Array(KakeiboMigrationPlan.stages.dropLast()) }
 }

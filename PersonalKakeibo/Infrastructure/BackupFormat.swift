@@ -1,8 +1,9 @@
 import Foundation
+import LifeCostIntegration
 import PersonalKakeiboDomain
 
 struct BackupFile: Codable {
-    var schemaVersion: Int = 2
+    var schemaVersion: Int = 4
     var exportedAt: Date = Date()
     var transactions: [Transaction]
     var categories: [PersonalKakeiboDomain.Category]
@@ -10,7 +11,10 @@ struct BackupFile: Codable {
     var categoryBudgets: [CategoryBudget]? = nil
     var recurringPlans: [RecurringPlan]? = nil
     var occurrences: [PlanOccurrence]? = nil
-    var snapshot: BackupSnapshot { .init(transactions: transactions, categories: categories, budgets: budgets, categoryBudgets: categoryBudgets ?? [], recurringPlans: recurringPlans ?? [], occurrences: occurrences ?? []) }
+    var importedPayments: [ImportedPayment]? = nil
+    var lifeCostSettings: [LifeCostSetting]? = nil
+    var finance: FinanceState? = nil
+    var snapshot: BackupSnapshot { .init(transactions: transactions, categories: categories, budgets: budgets, categoryBudgets: categoryBudgets ?? [], recurringPlans: recurringPlans ?? [], occurrences: occurrences ?? [], importedPayments: importedPayments ?? [], lifeCostSettings: lifeCostSettings ?? [], finance: finance ?? FinanceState()) }
 }
 struct ImportPreview {
     let original: BackupSnapshot
@@ -44,10 +48,11 @@ enum BackupFormat {
         encoder.dateEncodingStrategy = .custom { date, encoder in
             var container = encoder.singleValueContainer(); try container.encode(dates.string(from: date))
         }
-        return try encoder.encode(BackupFile(transactions: snapshot.transactions, categories: snapshot.categories, budgets: snapshot.budgets, categoryBudgets: snapshot.categoryBudgets, recurringPlans: snapshot.recurringPlans, occurrences: snapshot.occurrences))
+        return try encoder.encode(BackupFile(transactions: snapshot.transactions, categories: snapshot.categories, budgets: snapshot.budgets, categoryBudgets: snapshot.categoryBudgets, recurringPlans: snapshot.recurringPlans, occurrences: snapshot.occurrences, importedPayments: snapshot.importedPayments, lifeCostSettings: snapshot.lifeCostSettings, finance: snapshot.finance))
     }
     static func decode(_ data: Data) throws -> BackupSnapshot {
         guard data.count <= 50 * 1024 * 1024 else { throw StoreError.invalidData }
+        try IntegerJSON.validate(data)
         guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw StoreError.invalidData }
         for key in ["transactions", "budgets", "recurringPlans", "categoryBudgets"] {
             if object[key] == nil && ["recurringPlans", "categoryBudgets"].contains(key) { continue }
@@ -67,11 +72,17 @@ enum BackupFormat {
             guard let date = dates.date(from: value) else { throw StoreError.invalidData }; return date
         }
         let file = try decoder.decode(BackupFile.self, from: data)
-        guard [1, 2].contains(file.schemaVersion) else { throw StoreError.unsupported }
+        guard [1, 2, 3, 4].contains(file.schemaVersion) else { throw StoreError.unsupported }
+        if file.schemaVersion >= 3 {
+            guard file.importedPayments != nil, file.lifeCostSettings != nil else { throw StoreError.invalidData }
+        } else if !(file.importedPayments ?? []).isEmpty || !(file.lifeCostSettings ?? []).isEmpty { throw StoreError.invalidData }
+        if file.schemaVersion == 4 {
+            guard file.finance != nil else { throw StoreError.invalidData }
+        } else if file.finance != nil { throw StoreError.invalidData }
         try validate(file.snapshot); return file.snapshot
     }
     static func validate(_ snapshot: BackupSnapshot) throws {
-        let ids = snapshot.transactions.map(\.id) + snapshot.categories.map(\.id) + snapshot.budgets.map(\.id) + snapshot.categoryBudgets.map(\.id) + snapshot.recurringPlans.map(\.id) + snapshot.occurrences.map(\.id)
+        let ids = snapshot.transactions.map(\.id) + snapshot.categories.map(\.id) + snapshot.budgets.map(\.id) + snapshot.categoryBudgets.map(\.id) + snapshot.recurringPlans.map(\.id) + snapshot.occurrences.map(\.id) + snapshot.importedPayments.map(\.id) + snapshot.lifeCostSettings.map(\.id)
         guard Set(ids).count == ids.count else { throw KakeiboError.duplicateID }
         guard Set(snapshot.budgets.map(\.monthKey)).count == snapshot.budgets.count else { throw StoreError.conflict }
         for category in snapshot.categories {
@@ -99,6 +110,8 @@ enum BackupFormat {
             let entry = Transaction(type: plan.type, amount: plan.amount, categoryId: plan.categoryId, occurredAt: plan.startDate)
             try AmountValidator.validate(entry, category: categories[plan.categoryId], previous: entry)
         }
+        try LifeCostValidation.validate(snapshot)
+        try FinanceRules.validate(snapshot.finance, categories: snapshot.categories, transactions: snapshot.transactions)
         let planIds = Set(snapshot.recurringPlans.map(\.id))
         for occurrence in snapshot.occurrences {
             guard planIds.contains(occurrence.planId), Planning.isSupportedDate(occurrence.dueDate),
@@ -117,6 +130,9 @@ enum BackupFormat {
         && a.categoryBudgets.sorted { $0.id.uuidString < $1.id.uuidString } == b.categoryBudgets.sorted { $0.id.uuidString < $1.id.uuidString }
         && a.recurringPlans.sorted { $0.id.uuidString < $1.id.uuidString } == b.recurringPlans.sorted { $0.id.uuidString < $1.id.uuidString }
         && a.occurrences.sorted { $0.id.uuidString < $1.id.uuidString } == b.occurrences.sorted { $0.id.uuidString < $1.id.uuidString }
+        && a.importedPayments.sorted { $0.id.uuidString < $1.id.uuidString } == b.importedPayments.sorted { $0.id.uuidString < $1.id.uuidString }
+        && a.lifeCostSettings.sorted { $0.id.uuidString < $1.id.uuidString } == b.lifeCostSettings.sorted { $0.id.uuidString < $1.id.uuidString }
+        && a.finance == b.finance
     }
     static func preview(_ incoming: BackupSnapshot, current: BackupSnapshot, overwrite: Bool) throws -> ImportPreview {
         try validate(incoming); try validate(current)
@@ -139,8 +155,19 @@ enum BackupFormat {
             }
             return result
         }
-        let merged = try BackupSnapshot(transactions: merge(current.transactions, incoming.transactions), categories: merge(current.categories, incoming.categories), budgets: merge(current.budgets, incoming.budgets), categoryBudgets: merge(current.categoryBudgets, incoming.categoryBudgets), recurringPlans: merge(current.recurringPlans, incoming.recurringPlans), occurrences: merge(current.occurrences, incoming.occurrences))
+        let finance = try FinanceState(
+            accounts: merge(current.finance.accounts, incoming.finance.accounts),
+            postings: merge(current.finance.postings, incoming.finance.postings),
+            contracts: merge(current.finance.contracts, incoming.finance.contracts),
+            payments: merge(current.finance.payments, incoming.finance.payments),
+            assets: merge(current.finance.assets, incoming.finance.assets),
+            repairs: merge(current.finance.repairs, incoming.finance.repairs),
+            refunds: merge(current.finance.refunds, incoming.finance.refunds),
+            importedDatasetIds: Array(Set(current.finance.importedDatasetIds + incoming.finance.importedDatasetIds)).sorted { $0.uuidString < $1.uuidString }
+        )
+        let merged = try BackupSnapshot(transactions: merge(current.transactions, incoming.transactions), categories: merge(current.categories, incoming.categories), budgets: merge(current.budgets, incoming.budgets), categoryBudgets: merge(current.categoryBudgets, incoming.categoryBudgets), recurringPlans: merge(current.recurringPlans, incoming.recurringPlans), occurrences: merge(current.occurrences, incoming.occurrences), importedPayments: merge(current.importedPayments, incoming.importedPayments), lifeCostSettings: merge(current.lifeCostSettings, incoming.lifeCostSettings), finance: finance)
         try validate(merged)
+        try LifeCostValidation.protectRestore(current: current, next: merged)
         return ImportPreview(original: current, merged: merged, additions: additions, updates: updates)
     }
     static func csv(_ snapshot: BackupSnapshot) throws -> Data {
@@ -151,10 +178,10 @@ enum BackupFormat {
             if userInput, let first = value.trimmingCharacters(in: .whitespacesAndNewlines).first, "=+-@".contains(first) { value = "'" + value }
             return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
         }
-        var lines = ["id,type,amount,categoryId,categoryName,occurredAt,memo,source,createdAt,updatedAt"]
+        var lines = ["id,type,amount,categoryId,categoryName,occurredAt,memo,source,createdAt,updatedAt,isSavingsEligible"]
         let dates = formatter()
         for entry in snapshot.transactions.sorted(by: { $0.occurredAt < $1.occurredAt }) {
-            lines.append([quote(entry.id.uuidString), quote(entry.type.rawValue), String(entry.amount), quote(entry.categoryId.uuidString), quote(categories[entry.categoryId]!, userInput: true), quote(dates.string(from: entry.occurredAt)), quote(entry.memo, userInput: true), quote(entry.source.rawValue), quote(dates.string(from: entry.createdAt)), quote(dates.string(from: entry.updatedAt))].joined(separator: ","))
+            lines.append([quote(entry.id.uuidString), quote(entry.type.rawValue), String(entry.amount), quote(entry.categoryId.uuidString), quote(categories[entry.categoryId]!, userInput: true), quote(dates.string(from: entry.occurredAt)), quote(entry.memo, userInput: true), quote(entry.source.rawValue), quote(dates.string(from: entry.createdAt)), quote(dates.string(from: entry.updatedAt)), entry.isSavingsEligible ? "true" : "false"].joined(separator: ","))
         }
         return Data((lines.joined(separator: "\r\n") + "\r\n").utf8)
     }

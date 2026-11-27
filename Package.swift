@@ -8,10 +8,26 @@ let package = Package(
         .library(name: "PersonalKakeiboDomain", targets: ["PersonalKakeiboDomain"]),
         .library(name: "PersonalKakeiboApplication", targets: ["PersonalKakeiboApplication"])
     ],
+    dependencies: [
+        .package(path: "./LocalPackages/LifeCostIntegration")
+    ],
     targets: [
-        .target(name: "PersonalKakeiboDomain", path: "PersonalKakeibo/Domain"),
-        .target(name: "PersonalKakeiboApplication", dependencies: ["PersonalKakeiboDomain"], path: "PersonalKakeibo/Application"),
+        .target(name: "PersonalKakeiboDomain", dependencies: [.product(name: "LifeCostIntegration", package: "LifeCostIntegration")], path: "PersonalKakeibo/Domain"),
+        .target(name: "PersonalKakeiboApplication", dependencies: [
+            "PersonalKakeiboDomain",
+            .product(name: "LifeCostIntegration", package: "LifeCostIntegration")
+        ], path: "PersonalKakeibo/Application"),
         .testTarget(name: "PersonalKakeiboDomainTests", dependencies: ["PersonalKakeiboDomain"]),
-        .testTarget(name: "PersistenceTests", dependencies: ["PersonalKakeiboDomain", "PersonalKakeiboApplication"], path: ".", sources: ["PersonalKakeibo/Infrastructure", "PersonalKakeibo/Presentation/KakeiboViewModel.swift", "Tests/PersistenceTests"])
+        .testTarget(name: "PersistenceTests", dependencies: [
+            "PersonalKakeiboDomain",
+            "PersonalKakeiboApplication",
+            .product(name: "LifeCostIntegration", package: "LifeCostIntegration")
+        ], path: ".", sources: [
+            "PersonalKakeibo/Infrastructure",
+            "PersonalKakeibo/Presentation/KakeiboViewModel.swift",
+            "PersonalKakeibo/Presentation/FinanceViewModel.swift",
+            "PersonalKakeibo/Presentation/QuickExpenseViewModel.swift",
+            "Tests/PersistenceTests"
+        ])
     ]
 )

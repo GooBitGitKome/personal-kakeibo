@@ -6,10 +6,19 @@ import PersonalKakeiboApplication
 
 func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
 
+enum ManagementDestination: Hashable {
+    case accounts, payments, contracts, assets, reminders
+}
+
 @MainActor @Observable final class KakeiboViewModel {
     private let logger = Logger(subsystem: "PersonalKakeibo", category: "Entry")
-    private let store: Store
+    let store: Store
     var transactions: [Transaction] = []
+    var importedPayments: [ImportedPayment] = []
+    var lifeCostSettings: [LifeCostSetting] = []
+    var finance = FinanceState()
+    var effective: EffectiveMonth?
+    var selectedAccountId: UUID?
     var categories: [PersonalKakeiboDomain.Category] = []
     var budgets: [Budget] = []
     var categoryBudgets: [CategoryBudget] = []
@@ -18,6 +27,8 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
     let preferences: DevicePreferences
     let reminderService: any ReminderScheduling
     var selectedTab = 0
+    var managementPath: [ManagementDestination] = []
+    var hasLoadedSnapshot = false
     var error: String?
     var message: String?
     var month = Month()
@@ -28,6 +39,7 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
     var date = Date()
     var memo = ""
     var isSaving = false
+    var isSavingsEligible = false
     private var settings: SettingsUseCases { .init(categories: store, budgets: store) }
     func delete(_ id: UUID) {
         guard let entry = transactions.first(where: { $0.id == id }) else { return }
@@ -60,8 +72,13 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
     var duplicateWarning = false
     init(store: Store, preferences: DevicePreferences = DevicePreferences(), reminderService: any ReminderScheduling) {
         self.store = store; self.preferences = preferences; self.reminderService = reminderService
-        reminderService.onOpen = { [weak self] in self?.selectedTab = 3; self?.refresh() }
+        reminderService.onOpen = { [weak self] in self?.openReminders() }
         store.didChange = { [weak self] in self?.refresh() }
+        refresh()
+    }
+    func openReminders() {
+        selectedTab = 3
+        managementPath = [.reminders]
         refresh()
     }
     var choices: [PersonalKakeiboDomain.Category] {
@@ -69,11 +86,25 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
     }
     var monthly: [Transaction] { transactions.filter { month.range.contains($0.occurredAt) } }
     var budget: Budget? { budgets.first { $0.monthKey == month.key } }
+    var shouldShowWelcome: Bool {
+        hasLoadedSnapshot && !preferences.hasCompletedWelcome && transactions.isEmpty
+            && budgets.isEmpty && categoryBudgets.isEmpty && recurringPlans.isEmpty
+            && occurrences.isEmpty && importedPayments.isEmpty
+            && finance.accounts.isEmpty && finance.contracts.isEmpty && finance.assets.isEmpty
+            && finance.payments.isEmpty && finance.repairs.isEmpty && finance.refunds.isEmpty
+            && finance.postings.isEmpty
+    }
+    func completeWelcome() { preferences.completeWelcome() }
     func perform(_ operation: () throws -> Void) {
         do { try operation(); refresh() } catch { self.error = error.localizedDescription }
     }
     func refresh() {
         do {
+            let horizon = max(month.start, Month().start)
+            try FinanceUseCases(repository: store).ensurePayments(
+                through: Month(date: horizon).shifted(13).start)
+            do { try FinanceUseCases(repository: store).recordAutomaticSubscriptions() }
+            catch { self.error = "自動確定できませんでした：" + error.localizedDescription }
             let snapshot = try store.displaySnapshot()
             duplicateWarning = store.hasLogicalDuplicates
             try BackupFormat.validate(snapshot)
@@ -81,6 +112,12 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
                 if $0.occurredAt != $1.occurredAt { return $0.occurredAt > $1.occurredAt }
                 if $0.createdAt != $1.createdAt { return $0.createdAt > $1.createdAt }
                 return $0.id.uuidString < $1.id.uuidString
+            }
+            importedPayments = snapshot.importedPayments; lifeCostSettings = snapshot.lifeCostSettings
+            finance = snapshot.finance
+            if let selectedAccountId,
+               !finance.accounts.contains(where: { $0.id == selectedAccountId && !$0.isArchived }) {
+                self.selectedAccountId = nil
             }
             categories = snapshot.categories; budgets = snapshot.budgets
             categoryBudgets = snapshot.categoryBudgets; recurringPlans = snapshot.recurringPlans; occurrences = snapshot.occurrences
@@ -91,28 +128,40 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
             }
             if !choices.contains(where: { $0.id == categoryId }) { selectDefaultCategory() }
             updateNotifications()
-            summary = try MonthlySummary.calculate(transactions, in: month.range)
-        } catch { summary = nil; self.error = error.localizedDescription }
+            summary = try MonthlySummary.calculate(transactions, in: month.range, refunds: finance.refunds)
+            effective = try FinanceRules.effectiveMonth(finance, month: month)
+            hasLoadedSnapshot = true
+            SharedStore.reloadWidgets()
+        } catch { summary = nil; effective = nil; self.error = error.localizedDescription }
     }
     func save() {
         guard !isSaving else { return }; isSaving = true; defer { isSaving = false }
         logger.debug("Entry save requested")
         var saved = false
+        let savedCategoryId = categoryId
         perform {
             guard let categoryId else { throw KakeiboError.missingCategory }
             guard memo.count <= 1000 else { throw StoreError.invalidData }
-            let useCases = TransactionUseCases(transactions: store, categories: store)
-            try useCases.create(type: type, amountText: amount, categoryId: categoryId, occurredAt: date, memo: memo)
-            amount = ""; memo = ""; saved = true
+            let value = Transaction(type: type, amount: try AmountValidator.parse(amount),
+                categoryId: categoryId, occurredAt: date, memo: memo,
+                isSavingsEligible: isSavingsEligible)
+            try FinanceUseCases(repository: store).recordManual(value, accountId: selectedAccountId)
+            amount = ""; memo = ""; isSavingsEligible = false; selectDefaultCategory(); saved = true
         }
-        if saved, let categoryId {
+        if saved, let categoryId = savedCategoryId {
             message = "保存しました（端末保存）" + remainingText(categoryId: categoryId, date: date)
             logger.debug("Entry save and refresh completed")
         }
     }
-    func update(_ entry: Transaction, amount: String, category: UUID, date: Date, memo: String) throws {
+    func update(_ entry: Transaction, amount: String, category: UUID, date: Date, memo: String, isSavingsEligible: Bool? = nil) throws {
         guard memo.count <= 1000 else { throw StoreError.invalidData }
-        try TransactionUseCases(transactions: store, categories: store).update(id: entry.id, type: entry.type, amountText: amount, categoryId: category, occurredAt: date, memo: memo)
+        var value = entry
+        value.amount = try AmountValidator.parse(amount); value.categoryId = category
+        value.occurredAt = date; value.memo = memo
+        if let isSavingsEligible { value.isSavingsEligible = isSavingsEligible }
+        value.updatedAt = Date()
+        let account = finance.postings.first { $0.eventId == entry.id && $0.kind == .transaction }?.accountId
+        try FinanceUseCases(repository: store).updateManual(value, accountId: account)
         refresh()
         message = "更新しました" + remainingText(categoryId: category, date: date)
     }
@@ -137,6 +186,17 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
         }) {
             messages.append(ReminderMessage(id: "plans", title: "繰り返し収支の確認", body: "未記録の繰り返し収支を確認しましょう。"))
         }
+        let today = Month.calendar.startOfDay(for: date)
+        let threshold = Month.calendar.date(byAdding: .day, value: 30, to: today)!
+        for contract in finance.contracts where contract.status != .ended {
+            if let deadline = contract.cancellationDeadline, deadline >= today && deadline <= threshold {
+                messages.append(ReminderMessage(id: "contract.cancel." + contract.id.uuidString,
+                    title: "契約の解約期限", body: contract.name + "の期限を確認してください。"))
+            } else if let renewal = contract.renewalDate, renewal >= today && renewal <= threshold {
+                messages.append(ReminderMessage(id: "contract.renew." + contract.id.uuidString,
+                    title: "契約の更新予定", body: contract.name + "の更新日を確認してください。"))
+            }
+        }
         return messages
     }
     func appendAmount(_ digits: String) {
@@ -156,7 +216,8 @@ func yen(_ amount: Int64) -> String { amount.formatted(.number) + "円" }
     func remainingText(categoryId: UUID, date: Date) -> String {
         guard let budget = categoryBudgets.first(where: { $0.categoryId == categoryId }), budget.dailyAmount != nil || budget.monthlyAmount != nil else { return "" }
         do {
-            let amounts = try Planning.remaining(budget: budget, transactions: transactions, date: date)
+            let amounts = try Planning.remaining(budget: budget, transactions: transactions,
+                                                 date: date, refunds: finance.refunds)
             let name = categories.first { $0.id == categoryId }?.name ?? ""
             let formatter = DateFormatter(); formatter.locale = Locale(identifier: "ja_JP")
             formatter.calendar = Month.calendar; formatter.timeZone = Month.calendar.timeZone; formatter.dateStyle = .medium
