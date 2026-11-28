@@ -105,12 +105,10 @@ struct InstallmentRegisterView: View {
                 Section("メモ") { TextField("メモ", text: $memo, axis: .vertical) }
                 if let preview, let first = preview.first, let last = preview.last {
                     Section("支払予定") {
-                        Text("\(preview.count)回・合計 " + yen(preview.reduce(0) { $0 + $1.amount }))
-                        Text("1回目 " + yen(first.amount) + "（元本 " + yen(first.principal)
-                             + "・利息 " + yen(first.interest) + "）")
-                        Text("最終回 " + yen(last.amount) + "（元本 " + yen(last.principal)
-                             + "・利息 " + yen(last.interest) + "）")
-                        Text("手数料・利息の合計 " + yen(preview.reduce(0) { $0 + $1.interest }))
+                        Text("\(preview.count)回・合計 \(yen(installmentTotal(preview)))")
+                        Text("1回目 \(describe(first))")
+                        Text("最終回 \(describe(last))")
+                        Text("手数料・利息の合計 \(yen(installmentInterest(preview)))")
                     }
                     .accessibilityIdentifier("installment.preview")
                 }
@@ -213,8 +211,7 @@ struct InstallmentDetailView: View {
                 Button("やめる", role: .cancel) {}
             } message: {
                 if let status {
-                    Text("未払いの\(status.remainingCount)回分を取り消し、未払口座から残りの元本 "
-                         + yen(status.remainingPrincipal) + " を戻します。確認済みの支払は変わりません。")
+                    Text("未払いの\(status.remainingCount)回分を取り消し、未払口座から残りの元本 \(yen(status.remainingPrincipal)) を戻します。確認済みの支払は変わりません。")
                 }
             }
         }
@@ -227,9 +224,9 @@ struct InstallmentDetailView: View {
     private func label(_ payment: ScheduledPayment) -> String {
         switch payment.status {
         case .pending:
-            return "予定・元本 " + yen(payment.plannedPrincipal ?? 0) + "・利息 " + yen(payment.plannedInterest ?? 0)
+            return "予定・元本 \(yen(payment.plannedPrincipal ?? 0))・利息 \(yen(payment.plannedInterest ?? 0))"
         case .recorded:
-            return "確認済み・元本 " + yen(payment.principalAmount ?? 0) + "・利息 " + yen(payment.interestAmount ?? 0)
+            return "確認済み・元本 \(yen(payment.principalAmount ?? 0))・利息 \(yen(payment.interestAmount ?? 0))"
         case .cancelled: return "取消済み"
         case .skipped: return "スキップ"
         }
@@ -316,14 +313,14 @@ struct InstallmentActionView: View {
                 case .terms:
                     Section("残りの条件") {
                         row("残りの元本", yen(status.remainingPrincipal))
-                        row("現在の残りの支払額", yen(status.remainingPayment) + "・\(status.remainingCount)回")
+                        row("現在の残りの支払額", "\(yen(status.remainingPayment))・\(status.remainingCount)回")
                         TextField("新しい残りの支払総額", text: $remainingTotal).keyboardType(.numberPad)
                         TextField("新しい残りの回数", text: $remainingCycles).keyboardType(.numberPad)
                     }
                     if let preview = termsPreview, problem == nil, let first = preview.first, let last = preview.last {
                         Section("作り直す予定") {
-                            Text("\(preview.count)回・合計 " + yen(preview.reduce(0) { $0 + $1.amount }))
-                            Text("1回目 " + yen(first.amount) + "／最終回 " + yen(last.amount))
+                            Text("\(preview.count)回・合計 \(yen(installmentTotal(preview)))")
+                            Text("1回目 \(yen(first.amount))／最終回 \(yen(last.amount))")
                             Text("確認済みの支払と残りの元本は変わりません。")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
@@ -350,8 +347,10 @@ struct InstallmentActionView: View {
     private var summary: String {
         switch action {
         case .prepay:
-            return yen(status.remainingPrincipal + (feeValue ?? 0)) + "を支払元の口座から支払い、未払口座から "
-                + yen(status.remainingPrincipal) + " を引きます。手数料は " + yen(feeValue ?? 0) + " です。"
+            let payment = yen(status.remainingPrincipal + (feeValue ?? 0))
+            let principal = yen(status.remainingPrincipal)
+            let fee = yen(feeValue ?? 0)
+            return "\(payment)を支払元の口座から支払い、未払口座から\(principal)を引きます。手数料は\(fee)です。"
         case .terms:
             return "未払いの\(status.remainingCount)回分を取り消し、新しい予定に作り直します。"
         }
@@ -376,4 +375,19 @@ struct InstallmentActionView: View {
             dismiss()
         } catch { self.error = error.localizedDescription }
     }
+}
+
+private func installmentTotal(_ list: [InstallmentPayment]) -> Int64 {
+    list.reduce(Int64(0)) { $0 + $1.amount }
+}
+
+private func installmentInterest(_ list: [InstallmentPayment]) -> Int64 {
+    list.reduce(Int64(0)) { $0 + $1.interest }
+}
+
+private func describe(_ payment: InstallmentPayment) -> String {
+    let amount = yen(payment.amount)
+    let principal = yen(payment.principal)
+    let interest = yen(payment.interest)
+    return "\(amount)（元本 \(principal)・利息 \(interest)）"
 }
