@@ -34,6 +34,16 @@ import PersonalKakeiboDomain
     public func saveContract(_ input: FinanceContract, effectiveFrom: Date = Date()) throws {
         try apply { snapshot in
             var contract = input
+            let previous = snapshot.finance.contracts.first(where: { $0.id == input.id })
+            if previous?.totalPayment != nil || input.totalPayment != nil {
+                // Plans change only through the plan operations; descriptive text may still be edited.
+                guard let previous, previous.totalPayment != nil else { throw FinanceError.invalid }
+                var comparable = input
+                comparable.name = previous.name; comparable.memo = previous.memo
+                comparable.categoryId = previous.categoryId; comparable.necessity = previous.necessity
+                comparable.usageFrequency = previous.usageFrequency; comparable.updatedAt = previous.updatedAt
+                guard comparable == previous else { throw FinanceError.invalid }
+            }
             if let old = snapshot.finance.contracts.first(where: { $0.id == input.id }) {
                 let scheduleChanged = old.interval != input.interval ||
                     old.firstDueDate != input.firstDueDate || old.startDate != input.startDate
@@ -102,6 +112,10 @@ import PersonalKakeiboDomain
             guard let index = snapshot.finance.payments.firstIndex(where: { $0.id == expected.id }),
                   snapshot.finance.payments[index] == expected, expected.status == .pending
             else { throw FinanceError.changed }
+            if snapshot.finance.contracts.first(where: { $0.id == expected.contractId })?.totalPayment != nil {
+                // Skipping would leave principal unpaid; use cancel or change terms instead.
+                throw FinanceError.invalid
+            }
             snapshot.finance.payments[index].status = .skipped
             snapshot.finance.payments[index].updatedAt = Date()
         }
@@ -171,6 +185,13 @@ import PersonalKakeiboDomain
                         eventId: transaction.id, kind: .transaction, date: date,
                         amount: try Self.postingAmount(amount, for: account)))
                 }
+            }
+            if contract.totalPayment != nil,
+               let status = try snapshot.finance.installmentStatus(for: contract.id),
+               status.remainingCount == 0 {
+                // The last payment must settle the remaining principal exactly.
+                guard status.remainingPrincipal == 0 else { throw FinanceError.invalid }
+                try endContract(contract.id, in: &snapshot)
             }
     }
 
@@ -297,4 +318,210 @@ import PersonalKakeiboDomain
         }
     }
 
+    // MARK: - Installment plans
+
+    /// Input for registering an installment purchase.
+    public struct InstallmentInput: Equatable, Sendable {
+        public var name: String
+        public var categoryId: UUID
+        public var principal: Int64
+        public var totalPayment: Int64
+        public var cycles: Int
+        public var purchaseDate: Date
+        public var firstDueDate: Date
+        public var paymentAccountId: UUID
+        public var liabilityAccountId: UUID
+        public var memo: String
+        /// When set, an owned asset priced at `principal` is created and linked to the plan.
+        public var asset: AssetInput?
+
+        public struct AssetInput: Equatable, Sendable {
+            public var category: String
+            public var usefulMonths: Int
+            public var expectedResidual: Int64
+            public init(category: String = "その他", usefulMonths: Int, expectedResidual: Int64 = 0) {
+                self.category = category; self.usefulMonths = usefulMonths
+                self.expectedResidual = expectedResidual
+            }
+        }
+
+        public init(name: String, categoryId: UUID, principal: Int64, totalPayment: Int64, cycles: Int,
+                    purchaseDate: Date, firstDueDate: Date, paymentAccountId: UUID,
+                    liabilityAccountId: UUID, memo: String = "", asset: AssetInput? = nil) {
+            self.name = name; self.categoryId = categoryId; self.principal = principal
+            self.totalPayment = totalPayment; self.cycles = cycles; self.purchaseDate = purchaseDate
+            self.firstDueDate = firstDueDate; self.paymentAccountId = paymentAccountId
+            self.liabilityAccountId = liabilityAccountId; self.memo = memo; self.asset = asset
+        }
+    }
+
+    /// Registers a plan: every payment, the purchase posting on the liability account and the
+    /// optional asset are saved together. The principal is not recorded as an expense.
+    @discardableResult
+    public func registerInstallment(_ input: InstallmentInput) throws -> UUID {
+        var contractId = UUID()
+        try apply { snapshot in
+            let name = input.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !name.isEmpty, input.principal >= 1,
+                  (2...InstallmentSchedule.cycleRange.upperBound).contains(input.cycles),
+                  input.memo.count <= 1_000,
+                  let payer = snapshot.finance.accounts.first(where: { $0.id == input.paymentAccountId && !$0.isArchived }),
+                  payer.kind == .bank || payer.kind == .cash,
+                  let liability = snapshot.finance.accounts.first(where: { $0.id == input.liabilityAccountId && !$0.isArchived }),
+                  liability.kind.isLiability
+            else { throw FinanceError.invalid }
+            let schedule = try InstallmentSchedule.make(principal: input.principal,
+                total: input.totalPayment, cycles: input.cycles)
+            let calendar = Month.calendar
+            let purchaseDate = calendar.startOfDay(for: input.purchaseDate)
+            let firstDue = calendar.startOfDay(for: input.firstDueDate)
+            var assetId: UUID?
+            if let draft = input.asset {
+                let asset = OwnedAsset(name: name, category: draft.category, purchaseDate: purchaseDate,
+                    purchasePrice: input.principal, expectedResidual: draft.expectedResidual,
+                    usefulMonths: draft.usefulMonths)
+                snapshot.finance.assets.append(asset)
+                assetId = asset.id
+            }
+            let contract = FinanceContract(name: name, kind: .installment, categoryId: input.categoryId,
+                expectedAmount: schedule[0].amount, startDate: purchaseDate, firstDueDate: firstDue,
+                paymentAccountId: payer.id, liabilityAccountId: liability.id,
+                memo: input.memo, financedAssetId: assetId, maximumCycles: input.cycles,
+                principal: input.principal, totalPayment: input.totalPayment)
+            for (index, item) in schedule.enumerated() {
+                let due = try contract.interval.date(from: firstDue, index: index)
+                snapshot.finance.payments.append(ScheduledPayment(contractId: contract.id,
+                    seriesId: contract.seriesId, cycleIndex: index, dueDate: due, coverageStart: due,
+                    expectedAmount: item.amount, plannedPrincipal: item.principal,
+                    plannedInterest: item.interest))
+            }
+            snapshot.finance.contracts.append(contract)
+            snapshot.finance.postings.append(.init(accountId: liability.id, eventId: contract.id,
+                kind: .installmentPurchase, date: purchaseDate, amount: input.principal))
+            contractId = contract.id
+        }
+        return contractId
+    }
+
+    /// Pending payments and remaining principal of a plan, checked against what the caller showed.
+    private static func openPlan(_ contractId: UUID, expectedPendingCount: Int, expectedRemainingPrincipal: Int64,
+                                 in snapshot: BackupSnapshot) throws -> (contract: FinanceContract, status: InstallmentStatus) {
+        guard let contract = snapshot.finance.contracts.first(where: { $0.id == contractId }),
+              let status = try snapshot.finance.installmentStatus(for: contractId)
+        else { throw FinanceError.missing }
+        guard status.remainingCount == expectedPendingCount,
+              status.remainingPrincipal == expectedRemainingPrincipal
+        else { throw FinanceError.changed }
+        guard status.remainingCount > 0, contract.status != .ended else { throw FinanceError.invalid }
+        return (contract, status)
+    }
+
+    private static func cancelPending(_ contractId: UUID, in snapshot: inout BackupSnapshot) {
+        let now = Date()
+        for index in snapshot.finance.payments.indices
+        where snapshot.finance.payments[index].contractId == contractId &&
+              snapshot.finance.payments[index].status == .pending {
+            snapshot.finance.payments[index].status = .cancelled
+            snapshot.finance.payments[index].updatedAt = now
+        }
+    }
+
+    private static func endContract(_ contractId: UUID, in snapshot: inout BackupSnapshot) throws {
+        guard let index = snapshot.finance.contracts.firstIndex(where: { $0.id == contractId })
+        else { throw FinanceError.missing }
+        snapshot.finance.contracts[index].status = .ended
+        snapshot.finance.contracts[index].updatedAt = Date()
+    }
+
+    /// Cancels every pending payment and releases the remaining principal from the liability account.
+    /// Recorded payments are left untouched.
+    public func cancelInstallment(_ contractId: UUID, date: Date, expectedPendingCount: Int,
+                                  expectedRemainingPrincipal: Int64) throws {
+        try apply { snapshot in
+            let (contract, status) = try Self.openPlan(contractId, expectedPendingCount: expectedPendingCount,
+                expectedRemainingPrincipal: expectedRemainingPrincipal, in: snapshot)
+            guard let liabilityId = contract.liabilityAccountId else { throw FinanceError.invalid }
+            Self.cancelPending(contractId, in: &snapshot)
+            if status.remainingPrincipal > 0 {
+                snapshot.finance.postings.append(.init(accountId: liabilityId, eventId: contractId,
+                    kind: .installmentCancellation, date: Month.calendar.startOfDay(for: date),
+                    amount: -status.remainingPrincipal))
+            }
+            try Self.endContract(contractId, in: &snapshot)
+        }
+    }
+
+    /// Pays the remaining principal plus an optional fee at once and cancels the pending payments.
+    /// The principal is not an expense; the fee is.
+    public func prepayInstallment(_ contractId: UUID, date: Date, fee: Int64, memo: String = "",
+                                  expectedPendingCount: Int, expectedRemainingPrincipal: Int64) throws {
+        try apply { snapshot in
+            let (contract, status) = try Self.openPlan(contractId, expectedPendingCount: expectedPendingCount,
+                expectedRemainingPrincipal: expectedRemainingPrincipal, in: snapshot)
+            guard fee >= 0, memo.count <= 1_000, status.remainingPrincipal > 0,
+                  let payerId = contract.paymentAccountId, let liabilityId = contract.liabilityAccountId
+            else { throw FinanceError.invalid }
+            let day = Month.calendar.startOfDay(for: date)
+            let total = try FinanceRules.add(status.remainingPrincipal, fee)
+            let eventId = UUID()
+            let nextIndex = (snapshot.finance.payments.filter { $0.seriesId == contract.seriesId }
+                .map(\.cycleIndex).max() ?? -1) + 1
+            var payment = ScheduledPayment(contractId: contractId, seriesId: contract.seriesId,
+                cycleIndex: nextIndex, dueDate: day, coverageStart: day, expectedAmount: total,
+                actualAmount: total, principalAmount: status.remainingPrincipal, interestAmount: fee,
+                status: .recorded, settlementEventId: eventId)
+            Self.cancelPending(contractId, in: &snapshot)
+            snapshot.finance.postings.append(.init(accountId: payerId, eventId: eventId,
+                kind: .loanSettlement, date: day, amount: -total))
+            snapshot.finance.postings.append(.init(accountId: liabilityId, eventId: eventId,
+                kind: .loanSettlement, date: day, amount: -status.remainingPrincipal))
+            if fee > 0 {
+                let transaction = Transaction(type: .expense, amount: fee, categoryId: contract.categoryId,
+                    occurredAt: day, memo: memo.isEmpty ? contract.name + "（繰上返済手数料）" : memo,
+                    source: .lifecost)
+                try AmountValidator.validate(transaction,
+                    category: snapshot.categories.first { $0.id == contract.categoryId })
+                snapshot.transactions.append(transaction)
+                payment.transactionId = transaction.id
+            }
+            snapshot.finance.payments.append(payment)
+            try Self.endContract(contractId, in: &snapshot)
+        }
+    }
+
+    /// Replaces the pending payments using the remaining principal and a new remaining total and
+    /// cycle count. Recorded payments and the remaining principal do not change.
+    public func changeInstallmentTerms(_ contractId: UUID, remainingTotal: Int64, remainingCycles: Int,
+                                       expectedPendingCount: Int, expectedRemainingPrincipal: Int64) throws {
+        try apply { snapshot in
+            let (contract, status) = try Self.openPlan(contractId, expectedPendingCount: expectedPendingCount,
+                expectedRemainingPrincipal: expectedRemainingPrincipal, in: snapshot)
+            guard let firstPending = snapshot.finance.payments
+                .filter({ $0.contractId == contractId && $0.status == .pending })
+                .min(by: { $0.dueDate < $1.dueDate })
+            else { throw FinanceError.invalid }
+            let schedule = try InstallmentSchedule.make(principal: status.remainingPrincipal,
+                total: remainingTotal, cycles: remainingCycles)
+            let recorded = snapshot.finance.payments.filter { $0.contractId == contractId && $0.status == .recorded }
+            let recordedAmount = try recorded.reduce(Int64(0)) {
+                try FinanceRules.add($0, $1.actualAmount ?? $1.expectedAmount)
+            }
+            Self.cancelPending(contractId, in: &snapshot)
+            guard let index = snapshot.finance.contracts.firstIndex(where: { $0.id == contractId })
+            else { throw FinanceError.missing }
+            snapshot.finance.contracts[index].seriesId = UUID()
+            snapshot.finance.contracts[index].expectedAmount = schedule[0].amount
+            snapshot.finance.contracts[index].maximumCycles = recorded.count + remainingCycles
+            snapshot.finance.contracts[index].totalPayment = try FinanceRules.add(recordedAmount, remainingTotal)
+            snapshot.finance.contracts[index].updatedAt = Date()
+            let seriesId = snapshot.finance.contracts[index].seriesId
+            for (offset, item) in schedule.enumerated() {
+                let due = try contract.interval.date(from: firstPending.dueDate, index: offset)
+                snapshot.finance.payments.append(ScheduledPayment(contractId: contractId,
+                    seriesId: seriesId, cycleIndex: offset, dueDate: due, coverageStart: due,
+                    expectedAmount: item.amount, plannedPrincipal: item.principal,
+                    plannedInterest: item.interest))
+            }
+        }
+    }
 }

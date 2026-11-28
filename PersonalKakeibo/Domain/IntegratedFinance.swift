@@ -48,6 +48,7 @@ public struct FinanceAccount: Identifiable, Codable, Equatable, Sendable {
 
 public enum PostingKind: String, Codable, Sendable {
     case transaction, refund, transfer, cardSettlement, loanSettlement
+    case installmentPurchase, installmentCancellation
 }
 
 public struct AccountPosting: Identifiable, Codable, Equatable, Sendable {
@@ -196,6 +197,9 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
     public var legacySyncEnabled: Bool?
     public var replacedRecurringPlanId: UUID?
     public var legacyDatasetId: UUID?
+    /// Total to be paid for an installment plan (principal in `principal`, cycles in `maximumCycles`).
+    /// Nil for contracts that do not use the plan model.
+    public var totalPayment: Int64?
     public var updatedAt: Date
 
     public init(id: UUID = UUID(), seriesId: UUID = UUID(), name: String, kind: ContractKind,
@@ -210,6 +214,7 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
                 finalAmount: Int64? = nil, principal: Int64? = nil,
                 generationStart: Date? = nil, legacySyncEnabled: Bool? = nil,
                 replacedRecurringPlanId: UUID? = nil, legacyDatasetId: UUID? = nil,
+                totalPayment: Int64? = nil,
                 updatedAt: Date = Date()) {
         self.id = id; self.seriesId = seriesId; self.name = name; self.kind = kind
         self.categoryId = categoryId; self.expectedAmount = expectedAmount; self.isVariable = isVariable
@@ -224,7 +229,7 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
         self.principal = principal; self.generationStart = generationStart
         self.legacySyncEnabled = legacySyncEnabled
         self.replacedRecurringPlanId = replacedRecurringPlanId
-        self.legacyDatasetId = legacyDatasetId; self.updatedAt = updatedAt
+        self.legacyDatasetId = legacyDatasetId; self.totalPayment = totalPayment; self.updatedAt = updatedAt
     }
 }
 
@@ -249,6 +254,9 @@ public struct ScheduledPayment: Identifiable, Codable, Equatable, Sendable {
     public var isOverridden: Bool
     public var legacyDatasetId: UUID?
     public var legacySource: PaymentRecord?
+    /// Planned split for installment-plan payments; nil for payments created before backup v5.
+    public var plannedPrincipal: Int64?
+    public var plannedInterest: Int64?
     public var updatedAt: Date
     public var key: String { seriesId.uuidString + ":" + String(cycleIndex) }
 
@@ -258,7 +266,8 @@ public struct ScheduledPayment: Identifiable, Codable, Equatable, Sendable {
                 interestAmount: Int64? = nil, status: ScheduledPaymentStatus = .pending,
                 transactionId: UUID? = nil, settlementEventId: UUID? = nil,
                 isOverridden: Bool = false, legacyDatasetId: UUID? = nil,
-                legacySource: PaymentRecord? = nil, updatedAt: Date = Date()) {
+                legacySource: PaymentRecord? = nil, plannedPrincipal: Int64? = nil,
+                plannedInterest: Int64? = nil, updatedAt: Date = Date()) {
         self.id = id; self.contractId = contractId; self.seriesId = seriesId
         self.cycleIndex = cycleIndex; self.dueDate = dueDate; self.coverageStart = coverageStart
         self.expectedAmount = expectedAmount; self.actualAmount = actualAmount
@@ -266,6 +275,7 @@ public struct ScheduledPayment: Identifiable, Codable, Equatable, Sendable {
         self.status = status; self.transactionId = transactionId
         self.settlementEventId = settlementEventId; self.isOverridden = isOverridden
         self.legacyDatasetId = legacyDatasetId; self.legacySource = legacySource
+        self.plannedPrincipal = plannedPrincipal; self.plannedInterest = plannedInterest
         self.updatedAt = updatedAt
     }
 }
@@ -362,5 +372,14 @@ public struct FinanceState: Codable, Equatable, Sendable {
         self.payments = payments; self.assets = assets; self.repairs = repairs
         self.refunds = refunds
         self.importedDatasetIds = importedDatasetIds
+    }
+}
+
+public extension FinanceState {
+    /// True when the state holds data only readable by backup format v5 and later.
+    var usesInstallmentPlans: Bool {
+        contracts.contains { $0.totalPayment != nil }
+            || payments.contains { $0.plannedPrincipal != nil || $0.plannedInterest != nil }
+            || postings.contains { $0.kind == .installmentPurchase || $0.kind == .installmentCancellation }
     }
 }

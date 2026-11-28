@@ -3,7 +3,7 @@ import LifeCostIntegration
 import PersonalKakeiboDomain
 
 struct BackupFile: Codable {
-    var schemaVersion: Int = 4
+    var schemaVersion: Int = 5
     var exportedAt: Date = Date()
     var transactions: [Transaction]
     var categories: [PersonalKakeiboDomain.Category]
@@ -72,13 +72,15 @@ enum BackupFormat {
             guard let date = dates.date(from: value) else { throw StoreError.invalidData }; return date
         }
         let file = try decoder.decode(BackupFile.self, from: data)
-        guard [1, 2, 3, 4].contains(file.schemaVersion) else { throw StoreError.unsupported }
+        guard (1...5).contains(file.schemaVersion) else { throw StoreError.unsupported }
         if file.schemaVersion >= 3 {
             guard file.importedPayments != nil, file.lifeCostSettings != nil else { throw StoreError.invalidData }
         } else if !(file.importedPayments ?? []).isEmpty || !(file.lifeCostSettings ?? []).isEmpty { throw StoreError.invalidData }
-        if file.schemaVersion == 4 {
+        if file.schemaVersion >= 4 {
             guard file.finance != nil else { throw StoreError.invalidData }
         } else if file.finance != nil { throw StoreError.invalidData }
+        // Installment plans need new posting kinds, so only v5 files may carry them.
+        if file.schemaVersion < 5, file.finance?.usesInstallmentPlans == true { throw StoreError.invalidData }
         try validate(file.snapshot); return file.snapshot
     }
     static func validate(_ snapshot: BackupSnapshot) throws {
