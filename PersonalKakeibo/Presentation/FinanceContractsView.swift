@@ -5,6 +5,8 @@ struct FinanceContractsView: View {
     let model: KakeiboViewModel
     @State private var editing: FinanceContract?
     @State private var adding = false
+    @State private var registeringInstallment = false
+    @State private var detailing: FinanceContract?
     @State private var confirmingPayments: [ScheduledPayment]?
 
     private var groups: [(id: UUID, name: String, contracts: [FinanceContract])] {
@@ -37,6 +39,8 @@ struct FinanceContractsView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 Button("契約を追加") { adding = true }
+                Button("分割払いを登録") { registeringInstallment = true }
+                    .accessibilityIdentifier("contracts.addInstallment")
             }
             Section("今月のサブスクリプション") {
                 let payments = model.currentMonthSubscriptions
@@ -59,7 +63,9 @@ struct FinanceContractsView: View {
                     }
                     .font(.subheadline)
                     ForEach(group.contracts) { contract in
-                        Button { editing = contract } label: {
+                        Button {
+                            if contract.totalPayment != nil { detailing = contract } else { editing = contract }
+                        } label: {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(contract.name).font(.headline)
                                 Text(contract.kind.label + "・予定 " + yen(contract.expectedAmount)
@@ -67,6 +73,10 @@ struct FinanceContractsView: View {
                                     .font(.caption).foregroundStyle(.secondary)
                                 if let monthly = try? contract.interval.monthlyEquivalent(contract.expectedAmount) {
                                     Text("比較用月額 約" + monthly.formatted(.currency(code: "JPY").precision(.fractionLength(0))))
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                                if let status = model.installmentStatus(for: contract) {
+                                    Text("残り\(status.remainingCount)回・残りの元本 " + yen(status.remainingPrincipal))
                                         .font(.caption).foregroundStyle(.secondary)
                                 }
                                 if contract.status == .ended {
@@ -106,6 +116,8 @@ struct FinanceContractsView: View {
             }
         .sheet(item: $editing) { ContractEditorView(model: model, existing: $0) }
         .sheet(isPresented: $adding) { ContractEditorView(model: model, existing: nil) }
+        .sheet(isPresented: $registeringInstallment) { InstallmentRegisterView(model: model) }
+        .sheet(item: $detailing) { InstallmentDetailView(model: model, contractId: $0.id) }
     }
 }
 

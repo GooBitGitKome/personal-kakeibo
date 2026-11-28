@@ -194,8 +194,10 @@ struct ScheduledPaymentsView: View {
                         HStack {
                             Button("支払いを確認") { recording = payment }
                                 .buttonStyle(.borderedProminent)
-                            Button("予定を編集") { editing = payment }
-                            Button("スキップ") { skipping = payment }
+                            if model.contract(for: payment)?.totalPayment == nil {
+                                Button("予定を編集") { editing = payment }
+                                Button("スキップ") { skipping = payment }
+                            }
                         }
                     }
                 }
@@ -248,7 +250,8 @@ private struct PaymentActionView: View {
     init(model: KakeiboViewModel, payment: ScheduledPayment, recording: Bool) {
         self.model = model; self.payment = payment; self.recording = recording
         _amount = State(initialValue: String(payment.expectedAmount))
-        _principal = State(initialValue: String(payment.expectedAmount))
+        _principal = State(initialValue: String(
+            model.suggestedSplit(for: payment, amount: payment.expectedAmount)?.principal ?? payment.expectedAmount))
         _date = State(initialValue: recording ? Date() : payment.dueDate)
         _categoryId = State(initialValue: model.contract(for: payment)?.categoryId
             ?? model.categories.first(where: { $0.type == .expense })?.id ?? UUID())
@@ -277,6 +280,10 @@ private struct PaymentActionView: View {
                         TextField("元本返済額", text: $principal).keyboardType(.numberPad)
                         Text("差額を利息として支出に計上します。借入金口座は契約で設定してください。")
                             .font(.caption).foregroundStyle(.secondary)
+                        if model.contract(for: payment)?.totalPayment != nil {
+                            Text("元本の初期値は支払予定の内訳です。最終回では、残りの元本をすべて返済します。")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                     Picker("支出カテゴリ", selection: $categoryId) {
                         ForEach(model.categories.filter { $0.type == .expense && !$0.isArchived }) {

@@ -89,4 +89,33 @@ extension KakeiboViewModel {
             amount: amount, date: date, accountId: accountId, memo: memo)
         refresh()
     }
+    func installmentStatus(for contract: FinanceContract) -> InstallmentStatus? {
+        try? finance.installmentStatus(for: contract.id)
+    }
+    func suggestedSplit(for payment: ScheduledPayment, amount: Int64) -> (principal: Int64, interest: Int64)? {
+        try? finance.suggestedSplit(for: payment, amount: amount)
+    }
+    func registerInstallment(_ input: FinanceUseCases.InstallmentInput) throws {
+        try FinanceUseCases(repository: store).registerInstallment(input)
+        refresh(); requestNotifications()
+    }
+    func cancelInstallment(_ contractId: UUID, date: Date, expectedPendingCount: Int,
+                           expectedRemainingPrincipal: Int64) throws {
+        try FinanceUseCases(repository: store).cancelInstallment(contractId, date: date,
+            expectedPendingCount: expectedPendingCount, expectedRemainingPrincipal: expectedRemainingPrincipal)
+        refresh(); requestNotifications()
+    }
+    func prepayInstallment(_ contractId: UUID, date: Date, fee: Int64, expectedPendingCount: Int,
+                           expectedRemainingPrincipal: Int64) throws {
+        try FinanceUseCases(repository: store).prepayInstallment(contractId, date: date, fee: fee,
+            expectedPendingCount: expectedPendingCount, expectedRemainingPrincipal: expectedRemainingPrincipal)
+        refresh(); requestNotifications()
+    }
+    func changeInstallmentTerms(_ contractId: UUID, remainingTotal: Int64, remainingCycles: Int,
+                                expectedPendingCount: Int, expectedRemainingPrincipal: Int64) throws {
+        try FinanceUseCases(repository: store).changeInstallmentTerms(contractId,
+            remainingTotal: remainingTotal, remainingCycles: remainingCycles,
+            expectedPendingCount: expectedPendingCount, expectedRemainingPrincipal: expectedRemainingPrincipal)
+        refresh(); requestNotifications()
+    }
 }

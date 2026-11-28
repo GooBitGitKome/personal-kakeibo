@@ -34,6 +34,16 @@ import PersonalKakeiboDomain
     public func saveContract(_ input: FinanceContract, effectiveFrom: Date = Date()) throws {
         try apply { snapshot in
             var contract = input
+            let previous = snapshot.finance.contracts.first(where: { $0.id == input.id })
+            if previous?.totalPayment != nil || input.totalPayment != nil {
+                // Plans change only through the plan operations; descriptive text may still be edited.
+                guard let previous, previous.totalPayment != nil else { throw FinanceError.invalid }
+                var comparable = input
+                comparable.name = previous.name; comparable.memo = previous.memo
+                comparable.categoryId = previous.categoryId; comparable.necessity = previous.necessity
+                comparable.usageFrequency = previous.usageFrequency; comparable.updatedAt = previous.updatedAt
+                guard comparable == previous else { throw FinanceError.invalid }
+            }
             if let old = snapshot.finance.contracts.first(where: { $0.id == input.id }) {
                 let scheduleChanged = old.interval != input.interval ||
                     old.firstDueDate != input.firstDueDate || old.startDate != input.startDate
