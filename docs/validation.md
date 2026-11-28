@@ -1,5 +1,14 @@
 # 検証記録
 
+## GitHub Actions での検証（2026-11-27）
+
+環境: `macos-26` ランナー（macOS 26.7.2、Xcode 26.6 (17F113)、Apple Swift 6.3.3、iOS SDK 26.5）。ワークフローは `.github/workflows/ci.yml`（`swift test` と、署名なしの iOS Simulator ビルド）。
+
+- `main`（`ed89d45`、v0.1.0 の `4ef04f3` と同じソース）: [実行 45965661863](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45965661863) は**失敗**。`swift test` は 63 件成功（失敗 0）。署名なしビルドは `ContentView.swift:500:21` の `error: the compiler is unable to type-check this expression in reasonable time` で失敗した。ローカルの Xcode 27.2（Swift 6.4.2）では同じ式をコンパイルできた。
+- 修正: 式を 3 つの `let` に分けた（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、[PR #2](https://github.com/GooBitGitKome/personal-kakeibo/pull/2)、表示内容は変更なし）。PR の [実行 45966996873](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45966996873) は `swift test` と署名なしビルドの両方が**成功**した（約 4 分）。
+- 影響: タグ `v0.1.0`（`4ef04f3`）のコミットは Xcode 26.6 ではビルドできない。公開済みのタグは動かさない。修正は PR #2 のコミットで、次のタグの扱いは管理者が決める。
+- CI の対象外（未実施）: UI テスト、実機・iCloud・CloudKit・VoiceOver、署名付きビルド。CI の成功は、これらの検証済みを意味しない。
+
 ## v0.1.0 基準点の検証（2026-11-27）
 
 検証したコミット: 書き換え前の `f156ba0`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。未 push の履歴から端末名を除くため、履歴を書き換えて同じ内容を `4ef04f3` として作り直した。`f156ba0` と `4ef04f3` のソース・設定は同一で、差分は `docs/validation.md` と `CHANGELOG.md` の文面だけ。以下の SHA は書き換え後のもの。
