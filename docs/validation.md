@@ -6,6 +6,7 @@
 
 - `main`（`ed89d45`、v0.1.0 の `4ef04f3` と同じソース）: [実行 45965661863](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45965661863) は**失敗**。`swift test` は 63 件成功（失敗 0）。署名なしビルドは `ContentView.swift:500:21` の `error: the compiler is unable to type-check this expression in reasonable time` で失敗した。ローカルの Xcode 27.2（Swift 6.4.2）では同じ式をコンパイルできた。
 - 修正: 式を 3 つの `let` に分けた（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、[PR #2](https://github.com/GooBitGitKome/personal-kakeibo/pull/2)、表示内容は変更なし）。PR の [実行 45966996873](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45966996873) は `swift test` と署名なしビルドの両方が**成功**した（約 4 分）。
+- マージ後の `main`（`7fd4332`、PR #2 のマージコミット）: [実行 46101916085](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46101916085) は `swift test` と署名なしビルドの両方が**成功**した。失敗した実行（45965661863）は成功扱いにならず、ワークフローの権限は `contents: read` のみで、署名資格情報・タグ作成・配布の手順は含まない。
 - 影響: タグ `v0.1.0`（`4ef04f3`）のコミットは Xcode 26.6 ではビルドできない。公開済みのタグは動かさない。修正は PR #2 のコミットで、次のタグの扱いは管理者が決める。
 - CI の対象外（未実施）: UI テスト、実機・iCloud・CloudKit・VoiceOver、署名付きビルド。CI の成功は、これらの検証済みを意味しない。
 
