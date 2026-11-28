@@ -4,21 +4,22 @@
 
 環境: `macos-26` ランナー（macOS 26.7.2、Xcode 26.6 (17F113)、Apple Swift 6.3.3、iOS SDK 26.5）。ワークフローは `.github/workflows/ci.yml`（`swift test` と、署名なしの iOS Simulator ビルド）。
 
-- `main`（`ed89d45`、v0.1.0 の `4ef04f3` と同じソース）: [実行 45965661863](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45965661863) は**失敗**。`swift test` は 63 件成功（失敗 0）。署名なしビルドは `ContentView.swift:500:21` の `error: the compiler is unable to type-check this expression in reasonable time` で失敗した。ローカルの Xcode 27.2（Swift 6.4.2）では同じ式をコンパイルできた。
-- 修正: 式を 3 つの `let` に分けた（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、[PR #2](https://github.com/GooBitGitKome/personal-kakeibo/pull/2)、表示内容は変更なし）。PR の [実行 45966996873](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/45966996873) は `swift test` と署名なしビルドの両方が**成功**した（約 4 分）。
-- マージ後の `main`（`7fd4332`、PR #2 のマージコミット）: [実行 46101916085](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46101916085) は `swift test` と署名なしビルドの両方が**成功**した。失敗した実行（45965661863）は成功扱いにならず、ワークフローの権限は `contents: read` のみで、署名資格情報・タグ作成・配布の手順は含まない。
-- 影響: タグ `v0.1.0`（`4ef04f3`）のコミットは Xcode 26.6 ではビルドできない。公開済みのタグは動かさない。修正は PR #2 のコミットで、次のタグの扱いは管理者が決める。
+- `main`（`fd0b7e5`、v0.1.0 の `5dfca63` と同じソース）: 旧リポジトリの実行 45965661863 は**失敗**。`swift test` は 63 件成功（失敗 0）。署名なしビルドは `ContentView.swift:500:21` の `error: the compiler is unable to type-check this expression in reasonable time` で失敗した。ローカルの Xcode 27.2（Swift 6.4.2）では同じ式をコンパイルできた。
+- 修正: 式を 3 つの `let` に分けた（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、旧 PR #2 は [#2](https://github.com/GooBitGitKome/personal-kakeibo/issues/2) に記録、表示内容は変更なし）。旧 PR の実行 45966996873 は `swift test` と署名なしビルドの両方が**成功**した（約 4 分）。
+- マージ後の `main`（`ffc5965`、旧 PR #2 のマージコミット）: 旧リポジトリの実行 46101916085 は `swift test` と署名なしビルドの両方が**成功**した。失敗した実行（45965661863）は成功扱いにならず、ワークフローの権限は `contents: read` のみで、署名資格情報・タグ作成・配布の手順は含まない。
+- 影響: タグ `v0.1.0`（`5dfca63`）のコミットは Xcode 26.6 ではビルドできない。公開済みのタグは動かさない。修正は旧 PR #2 のコミットで、次のタグの扱いは管理者が決める。
+- 注: 上の実行 ID と SHA の一部は、リポジトリを作り直す前のものです。旧リポジトリは削除したため、実行の記録へのリンクはありません。SHA は、現在の履歴の同じ変更に読み替えています。
 - CI の対象外（未実施）: UI テスト、実機・iCloud・CloudKit・VoiceOver、署名付きビルド。CI の成功は、これらの検証済みを意味しない。
 
 ## v0.1.0 基準点の検証（2026-11-27）
 
-検証したコミット: 書き換え前の `f156ba0`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。未 push の履歴から端末名を除くため、履歴を書き換えて同じ内容を `4ef04f3` として作り直した。`f156ba0` と `4ef04f3` のソース・設定は同一で、差分は `docs/validation.md` と `CHANGELOG.md` の文面だけ。以下の SHA は書き換え後のもの。
+検証したコミット: 履歴を作り直す前の `f156ba0`（新規クローン `/tmp/kakeibo-verify` を detached HEAD でチェックアウト）。同じ内容は、現在の履歴では `5dfca63`（タグ `v0.1.0`）にあたる。`f156ba0` と `5dfca63` のソース・設定は同一で、差分は `docs/validation.md` と `CHANGELOG.md` の文面だけ。
 
 - 環境: macOS 27.2.1 (26B131)、Xcode 27.2 (27B52)、Apple Swift 6.4.2、arm64。README が想定する Xcode 26.3 / Swift 6.2.4 とは異なる。
 - `swift test --scratch-path /tmp/personal-kakeibo-build --disable-sandbox`: **成功。63 件、失敗 0**（PersonalKakeiboDomainTests 15 件、PersistenceTests 48 件、10,000 件のバックアップ試験を含む）。Swift Testing は 0 件。クローン内の `PrivacyInfo.xcprivacy` は 2 件（アプリ、Widget）。
 - `xcodegen generate`: 実行後の `git status --short` は空で、追跡済みの `project.pbxproj` は `project.yml` から再生成した内容と一致する。
 - `xcodebuild build -project PersonalKakeibo.xcodeproj -scheme PersonalKakeibo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`: **BUILD SUCCEEDED**（新しい DerivedData）。
-- 経緯: 先に Git 管理外の `.rollback/` を持つ作業ツリー（HEAD `24c237c`）で `swift test` を実行すると、`multiple resources named 'PrivacyInfo.xcprivacy' in target 'PersistenceTests'` で失敗した。`PersistenceTests` は `path: "."` で、SwiftPM は Git の無視設定に関係なくリポジトリ全体を走査するため、`.rollback/` 内のコピー 4 件も検出された。`Package.swift` にアプリと Widget の manifest の `exclude` を加えた（`4ef04f3`）。**`.rollback/` を持つ作業ツリーでは、この修正後も同じエラーで失敗する**（HEAD `0c7a4f9` で確認）。クローンで、この `exclude` なしでも失敗したかは未確認。
+- 経緯: 先に Git 管理外の `.rollback/` を持つ作業ツリー（HEAD `04822fd`）で `swift test` を実行すると、`multiple resources named 'PrivacyInfo.xcprivacy' in target 'PersistenceTests'` で失敗した。`PersistenceTests` は `path: "."` で、SwiftPM は Git の無視設定に関係なくリポジトリ全体を走査するため、`.rollback/` 内のコピー 4 件も検出された。`Package.swift` にアプリと Widget の manifest の `exclude` を加えた（`5dfca63`）。**`.rollback/` を持つ作業ツリーでは、この修正後も同じエラーで失敗する**（HEAD `fe45541` で確認）。クローンで、この `exclude` なしでも失敗したかは未確認。
 - 未検証: UI テスト、Widget を含む実機動作、iCloud・CloudKit、VoiceOver、署名付きビルド。Xcode 26.3 での実行。
 - 注意: ローカルに `.rollback/` がある作業ツリーでは `swift test` が失敗する。新規クローンで実行するか、`.rollback/` を一時的にリポジトリ外へ移す。
 
