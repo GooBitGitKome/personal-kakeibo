@@ -4,10 +4,47 @@
 
 ## [Unreleased]
 
+- なし。
+
+## [0.3.0] - 2026-11-28 ボーナス払い
+
+タグ `v0.3.0` は、この変更履歴を含むリリース PR（[#17](https://github.com/GooBitGitKome/personal-kakeibo/pull/17)）のマージコミットを指す注釈付きタグです。正式な配布や署名付きリリースではなく、検証した範囲だけを示す基準点です。
+
+### 内容
+
+- ボーナス払い（[#6](https://github.com/GooBitGitKome/personal-kakeibo/issues/6)）。分割払いの登録で、ボーナス月（1〜12 月から選ぶ）と、ボーナス月ごとの加算額を指定できる（併用払い）。加算額を除いた総額を回数で割り、端数は最終回に足す。ボーナス月の回は加算額を足す。手数料・利息は各回の支払額に比例して配分する。記帳、集計、取消、一括の繰上返済は分割払いと同じ。ボーナス払いの残りの条件の変更は対象外（取り消して登録し直す）。
+- JSON バックアップは v6（v1〜v5 は読み込める。ボーナス払いを含むバックアップは v5 までの版で読めない）。DB は変更なし。
+
+### 検証済みの範囲
+
+CI（`macos-26`）で、`swift test` 125 件（失敗 0）と署名なしの iOS Simulator ビルドが成功しました。詳細は [検証記録](docs/validation.md#ボーナス払い6の検証2026-11-28) を参照してください。
+
+### 残課題
+
+- Simulator・実機での画面の動作と見た目、VoiceOver、UI テスト、署名付きビルド、iCloud・CloudKit は未検証。
+- コミット済みの `project.pbxproj` は、手編集で新規ファイルを登録した。`xcodegen generate` の結果との一致は未確認。
+- ボーナス一括払い（1 回払い）、月ごとに違う加算額、割合での入力、ボーナス払いの条件変更は対象外。
+
+## [0.2.0] - 2026-11-28 分割払い
+
+タグ `v0.2.0` は、PR #14（分割払い）のマージコミット `2e64adb` を指す注釈付きタグです。このコミットの変更履歴は、まだ [Unreleased] の項目として書かれていました。リリースの節は、後から追記したものです。正式な配布や署名付きリリースではなく、検証した範囲だけを示す基準点です。
+
+### 内容
+
+- 分割払い（[#5](https://github.com/GooBitGitKome/personal-kakeibo/issues/5)）。購入額・支払総額・回数から全回の支払予定を作り、残り回数・残りの支払額・残りの元本を表示する。取消、一括の繰上返済、残りの条件の変更に対応。購入額は支出に計上せず、手数料・利息だけを費用にする。端数は各回を切り捨て、余りを最終回に足す。
+- JSON バックアップは v5（v1〜v4 は読み込める。分割払いを含むバックアップは v4 までの版で読めない）。DB は変更なし。
+- Apple の Team ID を、コミットするファイルから分離した。共有設定は `Config/Signing.xcconfig`（Team ID は空）、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書く。署名なしの Simulator ビルドと CI は Team ID なしで動く（[#11](https://github.com/GooBitGitKome/personal-kakeibo/issues/11)）。
 - Xcode 26.6（Swift 6.3.3）で型チェックがタイムアウトする `ContentView.swift` の式を分割した（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、旧 PR #2 は [#2](https://github.com/GooBitGitKome/personal-kakeibo/issues/2) に記録）。表示内容は変わらない。
-- Apple の Team ID を、コミットするファイルから分離した。共有設定は `Config/Signing.xcconfig`（Team ID は空）、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書く。署名なしの Simulator ビルドと CI は Team ID なしで動く（#11）。
-- 分割払い（v0.2.0、[#5](https://github.com/GooBitGitKome/personal-kakeibo/issues/5)）。購入額・支払総額・回数から全回の支払予定を作り、残り回数・残りの支払額・残りの元本を表示する。取消、一括の繰上返済、残りの条件の変更に対応。購入額は支出に計上せず、手数料・利息だけを費用にする。端数は各回を切り捨て、余りを最終回に足す。JSON バックアップは v5（v1〜v4 は読み込める。分割払いを含むバックアップは v4 までの版で読めない）。DB は変更なし。
-- ボーナス払い（v0.3.0、[#6](https://github.com/GooBitGitKome/personal-kakeibo/issues/6)）。分割払いの登録で、ボーナス月（1〜12 月から選ぶ）と、ボーナス月ごとの加算額を指定できる（併用払い）。加算額を除いた総額を回数で割り、端数は最終回に足す。ボーナス月の回は加算額を足す。手数料・利息は各回の支払額に比例して配分する。記帳、集計、取消、一括の繰上返済は分割払いと同じ。ボーナス払いの残りの条件の変更は対象外（取り消して登録し直す）。JSON バックアップは v6（v1〜v5 は読み込める。ボーナス払いを含むバックアップは v5 までの版で読めない）。DB は変更なし。
+
+### 検証済みの範囲
+
+CI（`macos-26`）で、`swift test` 95 件（失敗 0）と署名なしの iOS Simulator ビルドが成功しました。詳細は [検証記録](docs/validation.md#分割払い5の検証2026-11-28) を参照してください。
+
+### 残課題
+
+- Simulator・実機での画面の動作と見た目、VoiceOver、UI テスト（追加した 1 件は未実行）、署名付きビルド（#11 の受け入れ条件）、iCloud・CloudKit は未検証。
+- コミット済みの `project.pbxproj` は、手編集で新規ファイルを登録した。`xcodegen generate` の結果との一致は未確認。
+- 一部の繰上返済、年率からの計算は対象外。分割払いの予定は、スキップと個別の金額編集ができない。
 
 ## [0.1.0] - 2026-11-27 プロトタイプ最終版
 
