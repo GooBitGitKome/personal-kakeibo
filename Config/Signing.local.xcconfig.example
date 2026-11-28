@@ -1,0 +1,3 @@
+// このファイルを Config/Signing.local.xcconfig にコピーして、自分の Team ID を書く。
+// Signing.local.xcconfig は .gitignore 済みで、コミットされない。
+DEVELOPMENT_TEAM = YOURTEAMID

@@ -10,6 +10,9 @@ settings:
     SWIFT_VERSION: '6.0'
     KAKEIBO_BUNDLE_ID: com.example.PersonalKakeibo
     KAKEIBO_APP_GROUP: group.com.example.PersonalKakeibo.shared
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
 targets:
   PersonalKakeiboDomain:
     type: framework

@@ -25,8 +25,9 @@ entitlements = {
 }
 (root / 'PersonalKakeibo/App/Cloud.entitlements').write_bytes(plistlib.dumps(entitlements))
 text = (root / 'project.yml').read_text()
-# Keep app and widget on the same signing team, App Group, and CloudKit container.
-text = re.sub(r'^    DEVELOPMENT_TEAM:.*$', f'    DEVELOPMENT_TEAM: {args.team}', text, flags=re.MULTILINE)
+# Keep app and widget on the same App Group and CloudKit container.
+# The Team ID goes to the untracked local xcconfig, never into a committed file.
+(root / 'Config/Signing.local.xcconfig').write_text(f'DEVELOPMENT_TEAM = {args.team}\n')
 text = re.sub(r'^    KAKEIBO_BUNDLE_ID:.*$', f'    KAKEIBO_BUNDLE_ID: {args.bundle}', text, flags=re.MULTILINE)
 text = re.sub(r'^    KAKEIBO_APP_GROUP:.*$', f'    KAKEIBO_APP_GROUP: group.{args.bundle}.shared', text, flags=re.MULTILINE)
 text = text.replace('PersonalKakeibo/App/App.entitlements', 'PersonalKakeibo/App/Cloud.entitlements')

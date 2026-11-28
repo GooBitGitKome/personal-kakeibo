@@ -44,7 +44,18 @@ v0.2.0 以降は計画で、リリース済みではありません。リリー�
 
 ## 開く・実行する
 
-`PersonalKakeibo.xcodeproj`をXcode 26.3で開き、PersonalKakeiboスキームを選びます。Simulatorで実行するか、Signing & Capabilitiesで自分のTeamと実際のBundle IDを設定して実機で実行してください。標準のプロジェクトは端末内保存で、`com.example.PersonalKakeibo`は仮の識別子です。
+`PersonalKakeibo.xcodeproj`をXcode 26.3で開き、PersonalKakeiboスキームを選びます。Simulatorで実行するか、下の手順で自分のTeamを設定し、実際のBundle IDを指定して実機で実行してください。標準のプロジェクトは端末内保存で、`com.example.PersonalKakeibo`は仮の識別子です。
+
+### 署名付きビルド（自分の Team ID の設定）
+
+Team ID は個人情報として扱い、コミットするファイルには入れていません。共有の設定は `Config/Signing.xcconfig`（Team ID は空）で、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書きます。
+
+```sh
+cp Config/Signing.local.xcconfig.example Config/Signing.local.xcconfig
+# Signing.local.xcconfig の YOURTEAMID を、自分の10文字の Team ID に書き換える
+```
+
+Team ID を書かない場合は署名なしになります。Simulator ビルドと GitHub Actions はこの状態で動きます。
 
 プロジェクトを再生成する場合は、XcodeGenを用いて `xcodegen generate` を実行します。設定元は `project.yml` です。
 

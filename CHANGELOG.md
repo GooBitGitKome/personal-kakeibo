@@ -5,6 +5,7 @@
 ## [Unreleased]
 
 - Xcode 26.6（Swift 6.3.3）で型チェックがタイムアウトする `ContentView.swift` の式を分割した（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、[PR #2](https://github.com/GooBitGitKome/personal-kakeibo/pull/2)）。表示内容は変わらない。
+- Apple の Team ID を、コミットするファイルから分離した。共有設定は `Config/Signing.xcconfig`（Team ID は空）、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書く。署名なしの Simulator ビルドと CI は Team ID なしで動く（#11）。
 
 ## [0.1.0] - 2026-11-27 プロトタイプ最終版
 
