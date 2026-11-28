@@ -6,6 +6,7 @@
 
 - Xcode 26.6（Swift 6.3.3）で型チェックがタイムアウトする `ContentView.swift` の式を分割した（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、旧 PR #2 は [#2](https://github.com/GooBitGitKome/personal-kakeibo/issues/2) に記録）。表示内容は変わらない。
 - Apple の Team ID を、コミットするファイルから分離した。共有設定は `Config/Signing.xcconfig`（Team ID は空）、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書く。署名なしの Simulator ビルドと CI は Team ID なしで動く（#11）。
+- 分割払い（v0.2.0、[#5](https://github.com/GooBitGitKome/personal-kakeibo/issues/5)）。購入額・支払総額・回数から全回の支払予定を作り、残り回数・残りの支払額・残りの元本を表示する。取消、一括の繰上返済、残りの条件の変更に対応。購入額は支出に計上せず、手数料・利息だけを費用にする。端数は各回を切り捨て、余りを最終回に足す。JSON バックアップは v5（v1〜v4 は読み込める。分割払いを含むバックアップは v4 までの版で読めない）。DB は変更なし。
 
 ## [0.1.0] - 2026-11-27 プロトタイプ最終版
 

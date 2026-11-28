@@ -1,5 +1,16 @@
 # 検証記録
 
+## 分割払い（#5）の検証（2026-11-28）
+
+ブランチ `feature/5-installment-payments`（`7fc75ab`）で、`macos-26` ランナーの CI を実行した。[実行 46133806974](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46133806974) は成功した。
+
+- `swift test`: **95 件成功、失敗 0**（既存 63 件と新規 32 件）。新規の内訳は、支払予定の計算 7 件（端数の性質を、回数 1〜14・総額 60 円以下のすべての入力と、Int64 の上限までの境界値で確認）、モデルと検証 9 件、バックアップ v5 と旧ストア 4 件、ユースケース 12 件。
+- `xcodegen generate` と、署名なしの iOS Simulator ビルド: **BUILD SUCCEEDED**。画面の新規ファイル `InstallmentViews.swift` を含む。
+- 初回のビルドは、Xcode 26.6 の型チェックのタイムアウト（`InstallmentViews.swift`）で失敗し、文字列の連結を補間に直して解消した。
+- 仕様の各要件（登録、端数、記帳と集計、確認時の内訳、残額、取消、繰上返済、条件変更、互換性）は、ドメインとユースケースの試験で確認した。
+- 未検証: Simulator・実機での画面の動作と見た目（登録画面、詳細、確認ダイアログ、VoiceOver）、UI テスト（追加した 1 件は未実行で、CI は `UITests` をビルドしない）、署名付きビルド、iCloud・CloudKit。コミット済みの `project.pbxproj` は、この環境に XcodeGen がないため新規ファイルを手で登録した。CI が再生成した結果との一致は未確認。
+- 既知の制限: 一部の繰上返済、年率からの計算は対象外。分割払いの予定は、スキップと個別の金額編集ができない。
+
 ## 新リポジトリでの CI と Team ID の分離（2026-11-28）
 
 履歴を作り直した新リポジトリ（[ADR 0004](decisions/0004-team-id-and-published-history.md)）で、`macos-26` ランナーの `.github/workflows/ci.yml` を実行した。
