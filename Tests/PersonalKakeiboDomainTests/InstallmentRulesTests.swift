@@ -7,14 +7,14 @@ final class InstallmentRulesTests: XCTestCase {
 
     private struct Fixture {
         var state: FinanceState
-        var categories: [Category]
+        var categories: [PersonalKakeiboDomain.Category]
         var contract: FinanceContract
         var bank: FinanceAccount
         var loan: FinanceAccount
     }
 
     private func fixture(principal: Int64 = 100_000, total: Int64 = 110_000, cycles: Int = 10) throws -> Fixture {
-        let category = Category(name: "分割", type: .expense)
+        let category = PersonalKakeiboDomain.Category(name: "分割", type: .expense)
         let bank = FinanceAccount(name: "銀行", kind: .bank, openingDate: start, openingBalance: 500_000)
         let loan = FinanceAccount(name: "未払", kind: .loan, openingDate: start, openingBalance: 0)
         let schedule = try InstallmentSchedule.make(principal: principal, total: total, cycles: cycles)
