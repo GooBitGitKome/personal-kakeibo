@@ -24,6 +24,7 @@
 		4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */; };
 		3A1F0C7B5D2E4A6891B0C3D5 /* InstallmentSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */; };
 		3A1F0C7B5D2E4A6891B0C3D7 /* InstallmentPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */; };
+		3A1F0C7B5D2E4A6891B0C3DD /* BonusSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3DC /* BonusSchedule.swift */; };
 		3A1F0C7B5D2E4A6891B0C3D9 /* InstallmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D8 /* InstallmentViews.swift */; };
 		4DF1D2BCE1EB283D77E955F3 /* FinanceContractsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */; };
 		3A1F0C7B5D2E4A6891B0C3DB /* InstallmentRegistrationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3DA /* InstallmentRegistrationUITests.swift */; };
@@ -196,6 +197,7 @@
 		A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegratedFinance.swift; sourceTree = "<group>"; };
 		3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentSchedule.swift; sourceTree = "<group>"; };
 		3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentPlan.swift; sourceTree = "<group>"; };
+		3A1F0C7B5D2E4A6891B0C3DC /* BonusSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusSchedule.swift; sourceTree = "<group>"; };
 		3A1F0C7B5D2E4A6891B0C3D8 /* InstallmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentViews.swift; sourceTree = "<group>"; };
 		A77E656AFA59F395DB204CD8 /* InlineWidgetDisabledButtonsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineWidgetDisabledButtonsUITests.swift; sourceTree = "<group>"; };
 		AA60CB83B18B0B4B9909EDE7 /* ReminderSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSlot.swift; sourceTree = "<group>"; };
@@ -381,6 +383,7 @@
 				A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */,
 				3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */,
 				3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */,
+				3A1F0C7B5D2E4A6891B0C3DC /* BonusSchedule.swift */,
 				7E66174629E15A9F7D216FBC /* LifeCostPayments.swift */,
 				FDB9E2DEDB757078D48210BC /* Models.swift */,
 				B577D8F8BE2A950CA22ED63F /* Month.swift */,
@@ -671,6 +674,7 @@
 				4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */,
 				3A1F0C7B5D2E4A6891B0C3D5 /* InstallmentSchedule.swift in Sources */,
 				3A1F0C7B5D2E4A6891B0C3D7 /* InstallmentPlan.swift in Sources */,
+				3A1F0C7B5D2E4A6891B0C3DD /* BonusSchedule.swift in Sources */,
 				ED37AF38E337E3CE91D4B11F /* LifeCostPayments.swift in Sources */,
 				BD62E68A282C66905C8FBD24 /* Models.swift in Sources */,
 				3BF481AA60CF10956ADC7B5B /* Month.swift in Sources */,

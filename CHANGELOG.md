@@ -7,6 +7,7 @@
 - Xcode 26.6（Swift 6.3.3）で型チェックがタイムアウトする `ContentView.swift` の式を分割した（[#1](https://github.com/GooBitGitKome/personal-kakeibo/issues/1)、旧 PR #2 は [#2](https://github.com/GooBitGitKome/personal-kakeibo/issues/2) に記録）。表示内容は変わらない。
 - Apple の Team ID を、コミットするファイルから分離した。共有設定は `Config/Signing.xcconfig`（Team ID は空）、自分の値は Git に入らない `Config/Signing.local.xcconfig` に書く。署名なしの Simulator ビルドと CI は Team ID なしで動く（#11）。
 - 分割払い（v0.2.0、[#5](https://github.com/GooBitGitKome/personal-kakeibo/issues/5)）。購入額・支払総額・回数から全回の支払予定を作り、残り回数・残りの支払額・残りの元本を表示する。取消、一括の繰上返済、残りの条件の変更に対応。購入額は支出に計上せず、手数料・利息だけを費用にする。端数は各回を切り捨て、余りを最終回に足す。JSON バックアップは v5（v1〜v4 は読み込める。分割払いを含むバックアップは v4 までの版で読めない）。DB は変更なし。
+- ボーナス払い（v0.3.0、[#6](https://github.com/GooBitGitKome/personal-kakeibo/issues/6)）。分割払いの登録で、ボーナス月（1〜12 月から選ぶ）と、ボーナス月ごとの加算額を指定できる（併用払い）。加算額を除いた総額を回数で割り、端数は最終回に足す。ボーナス月の回は加算額を足す。手数料・利息は各回の支払額に比例して配分する。記帳、集計、取消、一括の繰上返済は分割払いと同じ。ボーナス払いの残りの条件の変更は対象外（取り消して登録し直す）。JSON バックアップは v6（v1〜v5 は読み込める。ボーナス払いを含むバックアップは v5 までの版で読めない）。DB は変更なし。
 
 ## [0.1.0] - 2026-11-27 プロトタイプ最終版
 

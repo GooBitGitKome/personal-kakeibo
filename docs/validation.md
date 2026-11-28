@@ -1,5 +1,16 @@
 # 検証記録
 
+## ボーナス払い（#6）の検証（2026-11-28）
+
+ブランチ `feature/6-bonus-payments`（`d259662`）で、`macos-26` ランナーの CI を実行した。[実行 46141991569](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46141991569) は成功した。
+
+- `swift test`: **125 件成功、失敗 0**（分割払いまでの 95 件と、新規 30 件）。新規の内訳は、支払予定の計算（不揃いな金額の分割、ボーナス月の金額）9 件、モデルと検証 7 件、バックアップ v6 と旧ストア 4 件、ユースケース 10 件。性質（合計の一致、利息は支払額以下）は、不揃いな金額の小さい全入力と、回数 1〜14・ボーナス月の組み合わせ 4 通り・加算額 3 通りの範囲で確認した。
+- `xcodegen generate` と、署名なしの iOS Simulator ビルド: **BUILD SUCCEEDED**。
+- 既存の分割払いの試験は、変更なしで成功した（`InstallmentBackupTests` の、バックアップのバージョンの期待値を 5 から 6 に更新した）。
+- 仕様の各要件（登録、検査、金額、記帳と集計、取消・繰上返済、条件変更の拒否、既存の分割払いとの関係、互換性）は、ドメインとユースケースの試験で確認した。
+- 未検証: Simulator・実機での画面の動作と見た目（ボーナス月のトグル、予定の表示、詳細、VoiceOver）、UI テスト（ボーナス払いの UI テストは未作成）、署名付きビルド、iCloud・CloudKit。`project.pbxproj` の `BonusSchedule.swift` の登録は手編集で、CI の再生成結果との一致は未確認。
+- 既知の制限: ボーナス一括払い（1 回払い）、月ごとに違う加算額、割合での入力、ボーナス払いの条件変更は対象外。
+
 ## 分割払い（#5）の検証（2026-11-28）
 
 ブランチ `feature/5-installment-payments`（`7fc75ab`）で、`macos-26` ランナーの CI を実行した。[実行 46133806974](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46133806974) は成功した。

@@ -26,15 +26,25 @@ public enum InstallmentSchedule {
         guard cycleRange.contains(cycles), principal >= 0, total >= principal,
               total >= Int64(cycles)
         else { throw FinanceError.invalid }
-        let count = Int64(cycles)
-        let base = total / count
+        let base = total / Int64(cycles)
+        var amounts = [Int64](repeating: base, count: cycles)
+        amounts[cycles - 1] = total - base * Int64(cycles - 1)
+        return try split(principal: principal, amounts: amounts)
+    }
+
+    /// Splits the given payment amounts into principal and interest/fee. Every amount must be at
+    /// least 1 yen, there must be 1...1,200 of them, and their sum must be at least `principal`.
+    public static func split(principal: Int64, amounts: [Int64]) throws -> [InstallmentPayment] {
+        guard cycleRange.contains(amounts.count), principal >= 0, amounts.allSatisfy({ $0 >= 1 })
+        else { throw FinanceError.invalid }
+        let total = try amounts.reduce(Int64(0)) { try FinanceRules.add($0, $1) }
+        guard total >= principal else { throw FinanceError.invalid }
         let interestTotal = total - principal
         var result: [InstallmentPayment] = []
-        result.reserveCapacity(cycles)
+        result.reserveCapacity(amounts.count)
         var paid: Int64 = 0
         var allocatedInterest: Int64 = 0
-        for index in 0..<cycles {
-            let amount = index == cycles - 1 ? total - paid : base
+        for amount in amounts {
             paid += amount
             let cumulativeInterest = try proportionalShare(of: interestTotal, numerator: paid, denominator: total)
             let interest = cumulativeInterest - allocatedInterest

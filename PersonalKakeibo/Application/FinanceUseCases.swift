@@ -334,6 +334,8 @@ import PersonalKakeiboDomain
         public var memo: String
         /// When set, an owned asset priced at `principal` is created and linked to the plan.
         public var asset: AssetInput?
+        /// When set, the payments in `months` carry `amount` on top of the monthly part.
+        public var bonus: BonusInput?
 
         public struct AssetInput: Equatable, Sendable {
             public var category: String
@@ -345,13 +347,24 @@ import PersonalKakeiboDomain
             }
         }
 
+        /// An extra amount added to the payments that fall in the given months (1...12).
+        public struct BonusInput: Equatable, Sendable {
+            public var months: Set<Int>
+            public var amount: Int64
+            public init(months: Set<Int>, amount: Int64) {
+                self.months = months; self.amount = amount
+            }
+        }
+
         public init(name: String, categoryId: UUID, principal: Int64, totalPayment: Int64, cycles: Int,
                     purchaseDate: Date, firstDueDate: Date, paymentAccountId: UUID,
-                    liabilityAccountId: UUID, memo: String = "", asset: AssetInput? = nil) {
+                    liabilityAccountId: UUID, memo: String = "", asset: AssetInput? = nil,
+                    bonus: BonusInput? = nil) {
             self.name = name; self.categoryId = categoryId; self.principal = principal
             self.totalPayment = totalPayment; self.cycles = cycles; self.purchaseDate = purchaseDate
             self.firstDueDate = firstDueDate; self.paymentAccountId = paymentAccountId
             self.liabilityAccountId = liabilityAccountId; self.memo = memo; self.asset = asset
+            self.bonus = bonus
         }
     }
 
@@ -370,11 +383,20 @@ import PersonalKakeiboDomain
                   let liability = snapshot.finance.accounts.first(where: { $0.id == input.liabilityAccountId && !$0.isArchived }),
                   liability.kind.isLiability
             else { throw FinanceError.invalid }
-            let schedule = try InstallmentSchedule.make(principal: input.principal,
-                total: input.totalPayment, cycles: input.cycles)
             let calendar = Month.calendar
             let purchaseDate = calendar.startOfDay(for: input.purchaseDate)
             let firstDue = calendar.startOfDay(for: input.firstDueDate)
+            let dueDates = try (0..<input.cycles).map { try BillingInterval().date(from: firstDue, index: $0) }
+            let schedule: [InstallmentPayment]
+            var bonusMonths: [Int]?
+            if let bonus = input.bonus {
+                schedule = try BonusSchedule.make(principal: input.principal, total: input.totalPayment,
+                    dueDates: dueDates, bonusMonths: bonus.months, bonusAmount: bonus.amount)
+                bonusMonths = bonus.months.sorted()
+            } else {
+                schedule = try InstallmentSchedule.make(principal: input.principal,
+                    total: input.totalPayment, cycles: input.cycles)
+            }
             var assetId: UUID?
             if let draft = input.asset {
                 let asset = OwnedAsset(name: name, category: draft.category, purchaseDate: purchaseDate,
@@ -387,9 +409,10 @@ import PersonalKakeiboDomain
                 expectedAmount: schedule[0].amount, startDate: purchaseDate, firstDueDate: firstDue,
                 paymentAccountId: payer.id, liabilityAccountId: liability.id,
                 memo: input.memo, financedAssetId: assetId, maximumCycles: input.cycles,
-                principal: input.principal, totalPayment: input.totalPayment)
+                principal: input.principal, totalPayment: input.totalPayment,
+                bonusMonths: bonusMonths, bonusAmount: input.bonus?.amount)
             for (index, item) in schedule.enumerated() {
-                let due = try contract.interval.date(from: firstDue, index: index)
+                let due = dueDates[index]
                 snapshot.finance.payments.append(ScheduledPayment(contractId: contract.id,
                     seriesId: contract.seriesId, cycleIndex: index, dueDate: due, coverageStart: due,
                     expectedAmount: item.amount, plannedPrincipal: item.principal,
@@ -496,6 +519,8 @@ import PersonalKakeiboDomain
         try apply { snapshot in
             let (contract, status) = try Self.openPlan(contractId, expectedPendingCount: expectedPendingCount,
                 expectedRemainingPrincipal: expectedRemainingPrincipal, in: snapshot)
+            // Bonus plans have no term change; they are cancelled and registered again.
+            guard contract.bonusAmount == nil else { throw FinanceError.invalid }
             guard let firstPending = snapshot.finance.payments
                 .filter({ $0.contractId == contractId && $0.status == .pending })
                 .min(by: { $0.dueDate < $1.dueDate })

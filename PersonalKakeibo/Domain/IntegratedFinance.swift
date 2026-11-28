@@ -200,6 +200,10 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
     /// Total to be paid for an installment plan (principal in `principal`, cycles in `maximumCycles`).
     /// Nil for contracts that do not use the plan model.
     public var totalPayment: Int64?
+    /// Bonus months (1...12, ascending) and the extra amount paid in each of them. Both are set
+    /// together, only for installment plans, or both are nil.
+    public var bonusMonths: [Int]?
+    public var bonusAmount: Int64?
     public var updatedAt: Date
 
     public init(id: UUID = UUID(), seriesId: UUID = UUID(), name: String, kind: ContractKind,
@@ -214,7 +218,7 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
                 finalAmount: Int64? = nil, principal: Int64? = nil,
                 generationStart: Date? = nil, legacySyncEnabled: Bool? = nil,
                 replacedRecurringPlanId: UUID? = nil, legacyDatasetId: UUID? = nil,
-                totalPayment: Int64? = nil,
+                totalPayment: Int64? = nil, bonusMonths: [Int]? = nil, bonusAmount: Int64? = nil,
                 updatedAt: Date = Date()) {
         self.id = id; self.seriesId = seriesId; self.name = name; self.kind = kind
         self.categoryId = categoryId; self.expectedAmount = expectedAmount; self.isVariable = isVariable
@@ -229,7 +233,8 @@ public struct FinanceContract: Identifiable, Codable, Equatable, Sendable {
         self.principal = principal; self.generationStart = generationStart
         self.legacySyncEnabled = legacySyncEnabled
         self.replacedRecurringPlanId = replacedRecurringPlanId
-        self.legacyDatasetId = legacyDatasetId; self.totalPayment = totalPayment; self.updatedAt = updatedAt
+        self.legacyDatasetId = legacyDatasetId; self.totalPayment = totalPayment
+        self.bonusMonths = bonusMonths; self.bonusAmount = bonusAmount; self.updatedAt = updatedAt
     }
 }
 
@@ -381,5 +386,10 @@ public extension FinanceState {
         contracts.contains { $0.totalPayment != nil }
             || payments.contains { $0.plannedPrincipal != nil || $0.plannedInterest != nil }
             || postings.contains { $0.kind == .installmentPurchase || $0.kind == .installmentCancellation }
+    }
+
+    /// True when the state holds bonus-month plans, readable only by backup format v6 and later.
+    var usesBonusPlans: Bool {
+        contracts.contains { $0.bonusMonths != nil || $0.bonusAmount != nil }
     }
 }
