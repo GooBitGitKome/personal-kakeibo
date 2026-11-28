@@ -1,5 +1,14 @@
 # 検証記録
 
+## 新リポジトリでの CI と Team ID の分離（2026-11-28）
+
+履歴を作り直した新リポジトリ（[ADR 0004](decisions/0004-team-id-and-published-history.md)）で、`macos-26` ランナーの `.github/workflows/ci.yml` を実行した。
+
+- PR #12（Team ID の分離。`6d50dc6`）: [実行 46107234376](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46107234376) は、`swift test`、`xcodegen generate`、署名なしの iOS Simulator ビルドのすべてが**成功**した。ビルドは Team ID なしで通る。
+- マージ後の `main`（`ee7036b`）: [実行 46107519900](https://github.com/GooBitGitKome/personal-kakeibo/actions/runs/46107519900) も、すべて**成功**した。
+- 注: `Config/Signing.xcconfig` の `#include?` は、`Signing.local.xcconfig` がなくても動く。`xcodegen generate` で再生成した `project.pbxproj` は、CI 上でビルドできた。再生成結果と、コミット済みの手編集の `project.pbxproj` との一致は未確認。
+- 未検証: `Signing.local.xcconfig` に Team ID を書いた署名付きビルド（#11 の受け入れ条件）。
+
 ## GitHub Actions での検証（2026-11-27）
 
 環境: `macos-26` ランナー（macOS 26.7.2、Xcode 26.6 (17F113)、Apple Swift 6.3.3、iOS SDK 26.5）。ワークフローは `.github/workflows/ci.yml`（`swift test` と、署名なしの iOS Simulator ビルド）。
