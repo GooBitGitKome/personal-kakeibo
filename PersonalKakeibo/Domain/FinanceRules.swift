@@ -105,6 +105,7 @@ public enum FinanceRules {
                 else { throw FinanceError.missing }
             }
         }
+        try validateInstallmentPlans(state)
         for asset in state.assets {
             guard !asset.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                   asset.name.count <= 100, asset.category.count <= 100, asset.memo.count <= 1_000,
@@ -134,11 +135,57 @@ public enum FinanceRules {
         }
     }
 
+    /// Rules for contracts that use the installment-plan model (`totalPayment != nil`).
+    private static func validateInstallmentPlans(_ state: FinanceState) throws {
+        let accounts = Dictionary(uniqueKeysWithValues: state.accounts.map { ($0.id, $0) })
+        for contract in state.contracts {
+            guard let total = contract.totalPayment else { continue }
+            guard contract.kind == .installment,
+                  let principal = contract.principal, principal > 0,
+                  let cycles = contract.maximumCycles, InstallmentSchedule.cycleRange.contains(cycles),
+                  total >= principal, total >= Int64(cycles),
+                  let liabilityId = contract.liabilityAccountId,
+                  accounts[liabilityId]?.kind.isLiability == true,
+                  let payerId = contract.paymentAccountId,
+                  let payer = accounts[payerId], payer.kind == .bank || payer.kind == .cash
+            else { throw FinanceError.invalid }
+            let purchases = state.postings.filter { $0.eventId == contract.id && $0.kind == .installmentPurchase }
+            guard purchases.count == 1, purchases[0].accountId == liabilityId, purchases[0].amount == principal
+            else { throw FinanceError.invalid }
+            var recordedPrincipal: Int64 = 0
+            for payment in state.payments where payment.contractId == contract.id {
+                if payment.status == .recorded {
+                    recordedPrincipal = try add(recordedPrincipal, payment.principalAmount ?? 0)
+                }
+                if payment.status == .pending {
+                    guard let plannedPrincipal = payment.plannedPrincipal,
+                          let plannedInterest = payment.plannedInterest,
+                          plannedPrincipal >= 0, plannedInterest >= 0,
+                          try add(plannedPrincipal, plannedInterest) == payment.expectedAmount
+                    else { throw FinanceError.invalid }
+                }
+            }
+            var released: Int64 = 0
+            for posting in state.postings where posting.eventId == contract.id && posting.kind == .installmentCancellation {
+                guard posting.accountId == liabilityId, posting.amount < 0 else { throw FinanceError.invalid }
+                released = try add(released, -posting.amount)
+            }
+            guard try add(recordedPrincipal, released) <= principal else { throw FinanceError.invalid }
+        }
+        for posting in state.postings where posting.kind == .installmentPurchase || posting.kind == .installmentCancellation {
+            guard let contract = state.contracts.first(where: { $0.id == posting.eventId }),
+                  contract.totalPayment != nil
+            else { throw FinanceError.missing }
+        }
+    }
+
     /// Persists occurrence IDs once. Re-running this function keeps them stable.
     public static func generatePayments(_ original: FinanceState, through end: Date) throws -> FinanceState {
         var next = original
         var indices = Dictionary(uniqueKeysWithValues: next.payments.enumerated().map { ($0.element.key, $0.offset) })
         for contract in next.contracts {
+            // Installment plans materialize every payment when registered; never regenerate them.
+            if contract.totalPayment != nil { continue }
             for index in 0..<10_000 {
                 if let maximum = contract.maximumCycles, index >= maximum { break }
                 let due = try contract.interval.date(from: contract.firstDueDate, index: index)
@@ -216,7 +263,10 @@ public enum FinanceRules {
             guard let contract = contractById[payment.contractId] else { continue }
             let amount = payment.actualAmount ?? payment.expectedAmount
             let value: Int64
-            if contract.kind == .loan || contract.kind == .installment {
+            if contract.totalPayment != nil {
+                let interest = payment.status == .recorded ? (payment.interestAmount ?? 0) : (payment.plannedInterest ?? 0)
+                value = Month(date: payment.dueDate) == month ? interest : 0
+            } else if contract.kind == .loan || contract.kind == .installment {
                 value = Month(date: payment.dueDate) == month ? (payment.interestAmount ?? 0) : 0
             } else if let months = contract.interval.coverageMonths {
                 let index = monthOffset(from: payment.coverageStart, to: month.start)

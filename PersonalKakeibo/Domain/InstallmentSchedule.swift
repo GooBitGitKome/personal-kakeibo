@@ -5,6 +5,10 @@ public struct InstallmentPayment: Equatable, Sendable {
     public let amount: Int64
     public let principal: Int64
     public let interest: Int64
+
+    public init(amount: Int64, principal: Int64, interest: Int64) {
+        self.amount = amount; self.principal = principal; self.interest = interest
+    }
 }
 
 /// Pure schedule calculation for an installment purchase.
