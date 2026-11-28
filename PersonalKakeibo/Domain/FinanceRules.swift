@@ -139,6 +139,15 @@ public enum FinanceRules {
     private static func validateInstallmentPlans(_ state: FinanceState) throws {
         let accounts = Dictionary(uniqueKeysWithValues: state.accounts.map { ($0.id, $0) })
         for contract in state.contracts {
+            if contract.bonusMonths != nil || contract.bonusAmount != nil {
+                // Bonus fields come as a pair, only on plans, with sorted unique months and a sane amount.
+                guard let months = contract.bonusMonths, let extra = contract.bonusAmount,
+                      let planTotal = contract.totalPayment,
+                      !months.isEmpty, months == Array(Set(months)).sorted(),
+                      months.allSatisfy({ BonusSchedule.months.contains($0) }),
+                      extra >= 1, extra <= planTotal
+                else { throw FinanceError.invalid }
+            }
             guard let total = contract.totalPayment else { continue }
             guard contract.kind == .installment,
                   let principal = contract.principal, principal > 0,

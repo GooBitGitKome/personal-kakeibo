@@ -44,7 +44,7 @@ final class InstallmentBackupTests: XCTestCase {
         try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
     }
 
-    @MainActor func testBackupIsV5AndInstallmentPlanRoundTrips() throws {
+    @MainActor func testBackupIsCurrentVersionAndInstallmentPlanRoundTrips() throws {
         let source = try store()
         let category = try XCTUnwrap(source.categories(type: .expense).first)
         var next = try source.snapshot()
@@ -53,7 +53,7 @@ final class InstallmentBackupTests: XCTestCase {
         let original = try source.snapshot()
 
         let data = try BackupFormat.encode(original)
-        XCTAssertEqual(try jsonObject(data)["schemaVersion"] as? Int, 5)
+        XCTAssertEqual(try jsonObject(data)["schemaVersion"] as? Int, 6)
         let decoded = try BackupFormat.decode(data)
         XCTAssertEqual(decoded.finance, original.finance)
 
