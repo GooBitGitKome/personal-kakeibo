@@ -175,6 +175,19 @@ final class BonusUseCaseTests: XCTestCase {
         XCTAssertEqual(snapshot.finance.contracts.first { $0.id == id }?.status, .ended)
     }
 
+    @MainActor func testPrepaymentWithAFeeBooksOnlyTheFeeAsAnExpense() throws {
+        let s = try setup()
+        let id = try register(s, bonus: juneAndDecember)
+        let current = try status(s, id)
+        try s.useCases.prepayInstallment(id, date: date(2026, 11, 20), fee: 500,
+            expectedPendingCount: current.remainingCount, expectedRemainingPrincipal: current.remainingPrincipal)
+        let snapshot = try s.store.snapshot()
+        XCTAssertEqual(snapshot.transactions.map(\.amount), [500])
+        XCTAssertEqual(try balance(s, s.bank), 500_000 - 100_500)
+        XCTAssertEqual(try balance(s, s.loan), 0)
+        XCTAssertEqual(try payments(s, id).filter { $0.status == .cancelled }.count, 12)
+    }
+
     @MainActor func testChangingTermsOfABonusPlanIsRejectedWithoutChanges() throws {
         let s = try setup()
         let id = try register(s, bonus: juneAndDecember)
