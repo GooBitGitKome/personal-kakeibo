@@ -1,0 +1,6 @@
+// 署名設定。コミットするファイルには Team ID を入れない。
+// 自分の Team ID は Config/Signing.local.xcconfig に書く（Git には入らない）。
+// 手順は README の「署名付きビルド」を参照。
+DEVELOPMENT_TEAM =
+
+#include? "Signing.local.xcconfig"

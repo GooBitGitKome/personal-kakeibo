@@ -160,6 +160,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7E1D4A0C5B3F2A8E9C6D1B40 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Signing.xcconfig; sourceTree = "<group>"; };
 		1205E63CFE9B3B7FD69EDF40 /* SettingsUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUseCases.swift; sourceTree = "<group>"; };
 		1621A78BF1EF7762CF0E99AB /* PersonalKakeiboApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalKakeiboApp.swift; sourceTree = "<group>"; };
 		1EF46B2C5C4E478784379686 /* SubscriptionServicePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionServicePickerView.swift; sourceTree = "<group>"; };
@@ -403,6 +404,7 @@
 		CF1B851D22E7242DF7749181 = {
 			isa = PBXGroup;
 			children = (
+				7E1D4A0C5B3F2A8E9C6D1B40 /* Signing.xcconfig */,
 				5CFD119922FE92A4B1FD2E94 /* App */,
 				11565BA6467014F38E89ECE1 /* Application */,
 				99DF606238ED203923B70B08 /* Domain */,
@@ -532,16 +534,8 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					81743EF54B151FA2219B8601 = {
-					};
-					B04B31B5DCC3D2382E7482D9 = {
-					};
-					C32111F2CAFB1C3933ED53FE = {
-					};
 					C8BE20727358138F539EAF92 = {
 						TestTargetID = FB61236896FE92A389A63A79;
-					};
-					FB61236896FE92A389A63A79 = {
 					};
 				};
 			};
@@ -774,6 +768,7 @@
 		};
 		6BA36B36990CDF653E3BF9AB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7E1D4A0C5B3F2A8E9C6D1B40 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -913,6 +908,7 @@
 		};
 		94C99B43B20CF82E9A60F301 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7E1D4A0C5B3F2A8E9C6D1B40 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

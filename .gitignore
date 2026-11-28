@@ -37,6 +37,9 @@ DerivedData/
 xcuserdata/
 *.xcuserstate
 
+# Local signing settings (Team ID は個人情報として Git に入れない)
+Config/Signing.local.xcconfig
+
 # -----------------------------------------------------------------------------
 # Local rollback checkpoints (source and signed app)
 # -----------------------------------------------------------------------------
