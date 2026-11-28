@@ -22,7 +22,11 @@
 		41AC26C4302506165EEA5743 /* PersonalKakeiboApplication.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B6E23B7D28910E9DA52D4BF /* PersonalKakeiboApplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F8C34BFF2F1685FF2CB8A3 /* PersonalKakeiboApplication.framework */; };
 		4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */; };
+		3A1F0C7B5D2E4A6891B0C3D5 /* InstallmentSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */; };
+		3A1F0C7B5D2E4A6891B0C3D7 /* InstallmentPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */; };
+		3A1F0C7B5D2E4A6891B0C3D9 /* InstallmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3D8 /* InstallmentViews.swift */; };
 		4DF1D2BCE1EB283D77E955F3 /* FinanceContractsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */; };
+		3A1F0C7B5D2E4A6891B0C3DB /* InstallmentRegistrationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F0C7B5D2E4A6891B0C3DA /* InstallmentRegistrationUITests.swift */; };
 		557EBC4321E358465D84260E /* BackupFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = C252A1471FA76A6CD242BD19 /* BackupFormat.swift */; };
 		59A60B2CD0F427868D4A32A2 /* SharedStoreLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850F05BE7D0F473BC08F7331 /* SharedStoreLock.swift */; };
 		5F43751B023210B1800EBB6B /* PersonalKakeiboDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */; };
@@ -190,6 +194,9 @@
 		9C5D77BE208827F5239B856E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9CF5893A7FE2FC2AEB9601C0 /* PersonalKakeiboDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PersonalKakeiboDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegratedFinance.swift; sourceTree = "<group>"; };
+		3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentSchedule.swift; sourceTree = "<group>"; };
+		3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentPlan.swift; sourceTree = "<group>"; };
+		3A1F0C7B5D2E4A6891B0C3D8 /* InstallmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentViews.swift; sourceTree = "<group>"; };
 		A77E656AFA59F395DB204CD8 /* InlineWidgetDisabledButtonsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineWidgetDisabledButtonsUITests.swift; sourceTree = "<group>"; };
 		AA60CB83B18B0B4B9909EDE7 /* ReminderSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSlot.swift; sourceTree = "<group>"; };
 		B15654A5D39DC6E33A08D2CC /* WidgetRegistrationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetRegistrationUITests.swift; sourceTree = "<group>"; };
@@ -220,6 +227,7 @@
 		F61FB4E49A18E732810B496C /* FinanceUseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceUseCases.swift; sourceTree = "<group>"; };
 		F9F0082A51F1F35D0EDB4399 /* FinanceHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceHubView.swift; sourceTree = "<group>"; };
 		FBFC39445DABF39B117DB029 /* SubscriptionServiceSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionServiceSelectionUITests.swift; sourceTree = "<group>"; };
+		3A1F0C7B5D2E4A6891B0C3DA /* InstallmentRegistrationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallmentRegistrationUITests.swift; sourceTree = "<group>"; };
 		FDB9E2DEDB757078D48210BC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -274,6 +282,7 @@
 				DDE67968F85D62DBB64B184F /* FinanceContractsView.swift */,
 				F9F0082A51F1F35D0EDB4399 /* FinanceHubView.swift */,
 				CA6D63F048F927C239E92CC9 /* FinanceViewModel.swift */,
+				3A1F0C7B5D2E4A6891B0C3D8 /* InstallmentViews.swift */,
 				E59315194236ECC3A519DDEF /* KakeiboViewModel.swift */,
 				3CED032540090662515CE348 /* NotificationSettingsView.swift */,
 				4269A35824BB3984C1F34192 /* QuickExpenseView.swift */,
@@ -341,6 +350,7 @@
 				E52002D63A0E5374209E17F5 /* QuickExpenseUITests.swift */,
 				FBFC39445DABF39B117DB029 /* SubscriptionServiceSelectionUITests.swift */,
 				B15654A5D39DC6E33A08D2CC /* WidgetRegistrationUITests.swift */,
+				3A1F0C7B5D2E4A6891B0C3DA /* InstallmentRegistrationUITests.swift */,
 			);
 			name = UITests;
 			path = Tests/UITests;
@@ -369,6 +379,8 @@
 				9015E7B8BD8C5F9D2037A3CE /* Calculations.swift */,
 				9340008697528539097481B6 /* FinanceRules.swift */,
 				A073036EF0AD643F9CD0F785 /* IntegratedFinance.swift */,
+				3A1F0C7B5D2E4A6891B0C3D4 /* InstallmentSchedule.swift */,
+				3A1F0C7B5D2E4A6891B0C3D6 /* InstallmentPlan.swift */,
 				7E66174629E15A9F7D216FBC /* LifeCostPayments.swift */,
 				FDB9E2DEDB757078D48210BC /* Models.swift */,
 				B577D8F8BE2A950CA22ED63F /* Month.swift */,
@@ -601,6 +613,7 @@
 				4DF1D2BCE1EB283D77E955F3 /* FinanceContractsView.swift in Sources */,
 				6671F464E34583B3FD8D2AE2 /* FinanceHubView.swift in Sources */,
 				0364E797F320A92BFD81B07C /* FinanceViewModel.swift in Sources */,
+				3A1F0C7B5D2E4A6891B0C3D9 /* InstallmentViews.swift in Sources */,
 				831E4CD698E70246C4861B32 /* KakeiboViewModel.swift in Sources */,
 				A71D4CBCC0395BD92618ABDF /* NotificationSettingsView.swift in Sources */,
 				90B58DDBD32797B926D06636 /* PersonalKakeiboApp.swift in Sources */,
@@ -627,6 +640,7 @@
 				AE0B1566F3EA7367C6AB1263 /* QuickExpenseUITests.swift in Sources */,
 				93F1D6204FFB7ABB0A1A78BA /* SubscriptionServiceSelectionUITests.swift in Sources */,
 				B86905F9082DEA0F11C2692A /* WidgetRegistrationUITests.swift in Sources */,
+				3A1F0C7B5D2E4A6891B0C3DB /* InstallmentRegistrationUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,6 +669,8 @@
 				C4D4381E71C49D4E9E6F7ACF /* Calculations.swift in Sources */,
 				CDFC17AD10007C3594CF3E5C /* FinanceRules.swift in Sources */,
 				4C3C6F2FD1DFACDA795DB54F /* IntegratedFinance.swift in Sources */,
+				3A1F0C7B5D2E4A6891B0C3D5 /* InstallmentSchedule.swift in Sources */,
+				3A1F0C7B5D2E4A6891B0C3D7 /* InstallmentPlan.swift in Sources */,
 				ED37AF38E337E3CE91D4B11F /* LifeCostPayments.swift in Sources */,
 				BD62E68A282C66905C8FBD24 /* Models.swift in Sources */,
 				3BF481AA60CF10956ADC7B5B /* Month.swift in Sources */,
