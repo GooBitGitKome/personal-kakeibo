@@ -18,6 +18,9 @@ struct InstallmentRegisterView: View {
     @State private var memo = ""
     @State private var registerAsset = false
     @State private var usefulMonths = "36"
+    @State private var useBonus = false
+    @State private var bonusMonths: Set<Int> = [6, 12]
+    @State private var bonusAmount = ""
     @State private var error: String?
 
     init(model: KakeiboViewModel) {
@@ -37,6 +40,45 @@ struct InstallmentRegisterView: View {
         return (amount, sum, count)
     }
 
+    /// Payment dates implied by the first due date and the cycle count (monthly).
+    private var dueDates: [Date]? {
+        guard let count = Int(cycles), (2...InstallmentSchedule.cycleRange.upperBound).contains(count) else { return nil }
+        let first = Month.calendar.startOfDay(for: firstDue)
+        return try? (0..<count).map { try BillingInterval().date(from: first, index: $0) }
+    }
+
+    private var bonusInput: FinanceUseCases.InstallmentInput.BonusInput? {
+        guard useBonus, let extra = try? AmountValidator.parse(bonusAmount) else { return nil }
+        return FinanceUseCases.InstallmentInput.BonusInput(months: bonusMonths, amount: extra)
+    }
+
+    private func bonusCount(_ dates: [Date]) -> Int {
+        BonusSchedule.bonusFlags(dueDates: dates, bonusMonths: bonusMonths).filter { $0 }.count
+    }
+
+    private func monthBinding(_ month: Int) -> Binding<Bool> {
+        Binding(get: { bonusMonths.contains(month) },
+                set: { isOn in
+                    if isOn { bonusMonths.insert(month) } else { bonusMonths.remove(month) }
+                })
+    }
+
+    private func bonusProblem(_ value: (principal: Int64, total: Int64, cycles: Int)) -> String? {
+        guard useBonus else { return nil }
+        guard let extra = try? AmountValidator.parse(bonusAmount) else {
+            return "ボーナス月の加算額は、1円以上の整数で入力してください。"
+        }
+        if bonusMonths.isEmpty { return "ボーナス月を1つ以上選んでください。" }
+        guard let dates = dueDates else { return nil }
+        let count = bonusCount(dates)
+        if count == 0 { return "支払期間にボーナス月が含まれません。" }
+        let extras = extra.multipliedReportingOverflow(by: Int64(count))
+        if extras.overflow || value.total - extras.partialValue < Int64(value.cycles) {
+            return "加算額が大きすぎます。加算額の合計を引いた毎月の部分が、回数以上になるようにしてください。"
+        }
+        return nil
+    }
+
     /// Why saving is not possible yet, or nil when the input is valid.
     private var problem: String? {
         if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "名前を入力してください。" }
@@ -46,6 +88,7 @@ struct InstallmentRegisterView: View {
         }
         if value.total < value.principal { return "支払総額は購入額以上である必要があります。" }
         if value.total < Int64(value.cycles) { return "支払総額は回数以上である必要があります。" }
+        if let message = bonusProblem(value) { return message }
         if payers.isEmpty || liabilities.isEmpty { return "支払元の口座と、未払口座（借入金・カード）を先に登録してください。" }
         if paymentAccountId == nil || liabilityAccountId == nil { return "支払元と未払口座を選んでください。" }
         if registerAsset {
@@ -58,6 +101,10 @@ struct InstallmentRegisterView: View {
 
     private var preview: [InstallmentPayment]? {
         guard problem == nil, let value = parsed else { return nil }
+        if let bonus = bonusInput, let dates = dueDates {
+            return try? BonusSchedule.make(principal: value.principal, total: value.total, dueDates: dates,
+                                           bonusMonths: bonus.months, bonusAmount: bonus.amount)
+        }
         return try? InstallmentSchedule.make(principal: value.principal, total: value.total, cycles: value.cycles)
     }
 
@@ -84,6 +131,18 @@ struct InstallmentRegisterView: View {
                     Text("支払総額と購入額の差を手数料・利息とします。各回は切り捨てて、余りは最終回に足します。毎月払いです。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
+                Section("ボーナス月") {
+                    Toggle("ボーナス月に加算する", isOn: $useBonus).accessibilityIdentifier("installment.useBonus")
+                    if useBonus {
+                        TextField("ボーナス月ごとの加算額", text: $bonusAmount).keyboardType(.numberPad)
+                            .accessibilityIdentifier("installment.bonusAmount")
+                        ForEach(1...12, id: \.self) { month in
+                            Toggle("\(month)月", isOn: monthBinding(month))
+                        }
+                        Text("選んだ月の支払日に、加算額を足します。支払日は初回支払日と同じ日です。加算額を除いた総額を、毎月の部分として回数で割ります。")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
                 Section("支払条件") {
                     Picker("支払元の口座", selection: $paymentAccountId) {
                         Text("選択").tag(Optional<UUID>.none)
@@ -109,6 +168,9 @@ struct InstallmentRegisterView: View {
                         Text("1回目 \(describe(first))")
                         Text("最終回 \(describe(last))")
                         Text("手数料・利息の合計 \(yen(installmentInterest(preview)))")
+                        if let bonus = bonusInput, let dates = dueDates {
+                            Text("ボーナス月に\(bonusCount(dates))回、\(yen(bonus.amount))を加算")
+                        }
                     }
                     .accessibilityIdentifier("installment.preview")
                 }
@@ -138,7 +200,7 @@ struct InstallmentRegisterView: View {
         let input = FinanceUseCases.InstallmentInput(name: name, categoryId: categoryId,
             principal: value.principal, totalPayment: value.total, cycles: value.cycles,
             purchaseDate: purchaseDate, firstDueDate: firstDue, paymentAccountId: paymentAccountId,
-            liabilityAccountId: liabilityAccountId, memo: memo, asset: asset)
+            liabilityAccountId: liabilityAccountId, memo: memo, asset: asset, bonus: bonusInput)
         do { try model.registerInstallment(input); dismiss() }
         catch { self.error = error.localizedDescription }
     }
@@ -167,6 +229,10 @@ struct InstallmentDetailView: View {
                         Text(contract.name).font(.headline)
                         row("購入額（元本）", yen(contract.principal ?? 0))
                         row("支払総額", yen(contract.totalPayment ?? 0))
+                        if let months = contract.bonusMonths, let extra = contract.bonusAmount {
+                            row("ボーナス月", bonusMonthsText(months)).accessibilityIdentifier("installment.bonusMonths")
+                            row("ボーナス加算額", yen(extra))
+                        }
                         if contract.status == .ended { Text("終了済み").foregroundStyle(.secondary) }
                     }
                     Section("残り") {
@@ -176,8 +242,13 @@ struct InstallmentDetailView: View {
                         row("残りの元本", yen(status.remainingPrincipal)).accessibilityIdentifier("installment.remainingPrincipal")
                     }
                     Section("操作") {
-                        Button("残りの条件を変更") { sheet = .terms(status) }
-                            .disabled(status.remainingCount == 0)
+                        if contract.bonusAmount == nil {
+                            Button("残りの条件を変更") { sheet = .terms(status) }
+                                .disabled(status.remainingCount == 0)
+                        } else {
+                            Text("ボーナス払いの残りの条件は変更できません。取り消して、登録し直してください。")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                         Button("一括で繰上返済") { sheet = .prepay(status) }
                             .disabled(status.remainingCount == 0 || status.remainingPrincipal <= 0)
                         Button("取消（未払いの予定をすべて取り消す）", role: .destructive) { confirmingCancel = true }
@@ -222,14 +293,25 @@ struct InstallmentDetailView: View {
     }
 
     private func label(_ payment: ScheduledPayment) -> String {
+        let text: String
         switch payment.status {
         case .pending:
-            return "予定・元本 \(yen(payment.plannedPrincipal ?? 0))・利息 \(yen(payment.plannedInterest ?? 0))"
+            text = "予定・元本 \(yen(payment.plannedPrincipal ?? 0))・利息 \(yen(payment.plannedInterest ?? 0))"
         case .recorded:
-            return "確認済み・元本 \(yen(payment.principalAmount ?? 0))・利息 \(yen(payment.interestAmount ?? 0))"
-        case .cancelled: return "取消済み"
-        case .skipped: return "スキップ"
+            text = "確認済み・元本 \(yen(payment.principalAmount ?? 0))・利息 \(yen(payment.interestAmount ?? 0))"
+        case .cancelled: text = "取消済み"
+        case .skipped: text = "スキップ"
         }
+        return isBonusPayment(payment) ? "ボーナス月・\(text)" : text
+    }
+
+    private func isBonusPayment(_ payment: ScheduledPayment) -> Bool {
+        guard let months = contract?.bonusMonths else { return false }
+        return months.contains(Month.calendar.component(.month, from: payment.dueDate))
+    }
+
+    private func bonusMonthsText(_ months: [Int]) -> String {
+        months.map { "\($0)月" }.joined(separator: "・")
     }
 
     private func cancel() {
